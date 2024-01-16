@@ -11,6 +11,7 @@ import {
   Filler,
   Colors,
   BarController,
+  PieController,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 
@@ -20,6 +21,7 @@ ChartJS.register(
   PointElement,
   BarElement,
   BarController,
+  PieController,
   Filler,
   Tooltip,
   Colors

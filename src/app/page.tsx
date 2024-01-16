@@ -107,7 +107,7 @@ export default async function Home() {
           <Text fontWeight={900} mb={6}>
             Breakdown of users by country
           </Text>
-          <AppPieChart data={countryCityChartData} />
+          <AppChartChart data={countryCityChartData} />
         </VStack>
       </Box>
     </HStack>
