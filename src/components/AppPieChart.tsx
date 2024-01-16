@@ -20,6 +20,7 @@ ChartJS.register(
   RadialLinearScale,
   PointElement,
   ArcElement,
+  BarElement,
   Filler,
   Tooltip,
   Colors
