@@ -14,9 +14,9 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  if (process.env.GRAPHQL_ENDPOINT === undefined) {
-    throw new Error("graphql endpoint url is missing in env");
-  }
+  // if (process.env.GRAPHQL_ENDPOINT === undefined) {
+  //   throw new Error("graphql endpoint url is missing in env");
+  // }
   return (
     <html lang="en" className={fonts.rubik.variable}>
       <body>
