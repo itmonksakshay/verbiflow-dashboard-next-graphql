@@ -2,12 +2,14 @@ import { Box } from "@chakra-ui/react";
 
 export default function AppEventCard({
   children,
+  width,
 }: {
   children: React.ReactNode;
+  width?: string;
 }) {
   return (
     <Box
-      w={"370px"}
+      w={width || "370px"}
       h={"300px"}
       borderRadius="30px"
       overflow="hidden"

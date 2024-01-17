@@ -2,8 +2,22 @@ import AppEventCard from "@/components/AppEventCard";
 import BrowserMockup from "@/components/BrowserMockup";
 import AppChartChart from "@/components/charts/AppChartChart";
 import { getApolloClient } from "@/lib/apolloClient";
-import { getEventCountById, getEvents } from "@/lib/gqls";
-import { Box, Center, HStack, Text, VStack } from "@chakra-ui/react";
+import { getEventCountById } from "@/lib/gqls";
+import {
+  Box,
+  HStack,
+  Table,
+  TableCaption,
+  TableContainer,
+  Tbody,
+  Td,
+  Text,
+  Tfoot,
+  Th,
+  Thead,
+  Tr,
+  VStack,
+} from "@chakra-ui/react";
 
 export default async function Page({ params }: { params: { id: string } }) {
   const client = getApolloClient();
@@ -12,62 +26,41 @@ export default async function Page({ params }: { params: { id: string } }) {
     client,
     id: Number(schemaId),
   });
-  //   console.log(getEventCount);
-
-  //   function formatDate(date) {
-  //     return date.toISOString().split("T")[0];
-  //   }
-
-  // Calculate the dates for the past 7 days, including today
   const today = new Date();
   const datesForLast7Days: string[] = [];
-  for (let i = 2; i >= 0; i--) {
+  const DAYS = 3;
+  for (let i = DAYS - 1; i >= 0; i--) {
     const date = new Date();
     date.setDate(today.getDate() - i);
     datesForLast7Days.push(date.toLocaleDateString("en-CA"));
   }
-
-  const allDates = getEventCount.map((item) => item.date);
-  const allValues = getEventCount.map((item) =>
-    item.data.map((v) => v.countValue)
-  );
-
-  const initializedDataset: any[] = datesForLast7Days.map((date) => ({
-    date,
-    values: [],
-  }));
-
-  allDates.forEach((date, index) => {
-    const datasetIndex = datesForLast7Days.indexOf(date);
-    if (datasetIndex !== -1) {
-      initializedDataset[datasetIndex].values = allValues[index];
-    }
-  });
   const datasets: any = [];
-
-  initializedDataset.forEach((dayData, index) => {
-    dayData.values.forEach((value: any, valueIndex: any) => {
-      if (!datasets[valueIndex]) {
-        datasets[valueIndex] = {
-          label: `Variant ${valueIndex + 1}`,
-          data: new Array(initializedDataset.length).fill(null),
-          backgroundColor:
-            (valueIndex + 1) % 2 === 1
-              ? "rgba(107, 70, 193, 0.5)"
-              : "rgba(255, 165, 0, 0.5)",
-          borderColor:
-            (valueIndex + 1) % 2 === 1
-              ? "rgb(107, 70, 193)"
-              : "rgb(255, 165, 0)",
-          borderWidth: 1,
-        };
-      }
-      datasets[valueIndex].data[index] = value;
+  datesForLast7Days.forEach((date, dateIndex) => {
+    getEventCount.forEach((event, eventIndex) => {
+      event.data.forEach((variant, variantIndex) => {
+        if (!datasets[variantIndex]) {
+          datasets[variantIndex] = {
+            label: `Variant ${variantIndex + 1}`,
+            data: new Array(datesForLast7Days.length).fill(0), // Initialize with zeros
+            backgroundColor:
+              variantIndex % 2 === 0
+                ? "rgba(107, 70, 193, 0.5)"
+                : "rgba(255, 165, 0, 0.5)",
+            borderColor:
+              variantIndex % 2 === 0 ? "rgb(107, 70, 193)" : "rgb(255, 165, 0)",
+            borderWidth: 1,
+          };
+        }
+        // Fill the dataset with actual values or zeros
+        if (date === event.date) {
+          datasets[variantIndex].data[dateIndex] = variant.countValue;
+        }
+      });
     });
   });
 
   const chartData = {
-    labels: initializedDataset.map((day) => day.date),
+    labels: datesForLast7Days, // Use the last 7 days as labels
     datasets: datasets,
   };
   return (
@@ -84,9 +77,50 @@ export default async function Page({ params }: { params: { id: string } }) {
       <Box height={"600px"} width={"500px"}>
         <AppChartChart data={chartData} />
       </Box>
-      <Box w={500} h={500}>
-        <BrowserMockup imageUrl="/assets/mockup.png" />
-      </Box>
+      <VStack>
+        <Box w={500} h={500}>
+          <BrowserMockup imageUrl="/assets/mockup.png" />
+        </Box>
+        <AppEventCard width="500px">
+          <VStack spacing={4} align={"center"} width={"100%"} height={"100%"}>
+            <Text fontWeight={900} fontSize={20}>
+              Metadata Comparison
+            </Text>
+            <TableContainer whiteSpace={"wrap"}>
+              <Table variant="simple">
+                <Thead>
+                  <Tr>
+                    <Th color={"purple.500"}>Name</Th>
+                    <Th color={"purple.500"}>Attribute</Th>
+                    <Th color={"purple.500"} isNumeric>
+                      Value
+                    </Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  <Tr>
+                    <Td>metadata name</Td>
+                    <Td>Average length IF STRING</Td>
+                    <Td isNumeric>25.4</Td>
+                  </Tr>
+                  <Tr>
+                    <Td>metadata 2 name</Td>
+                    <Td>Mean IF NUMBER</Td>
+                    <Td isNumeric>30.48</Td>
+                  </Tr>
+                </Tbody>
+                {/* <Tfoot>
+                  <Tr>
+                    <Th>To convert</Th>
+                    <Th>into</Th>
+                    <Th isNumeric>multiply by</Th>
+                  </Tr>
+                </Tfoot> */}
+              </Table>
+            </TableContainer>
+          </VStack>
+        </AppEventCard>
+      </VStack>
     </HStack>
   );
 }

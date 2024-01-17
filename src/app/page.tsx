@@ -9,6 +9,7 @@ import {
 } from "@/lib/gqls";
 import { Center, HStack, Text, VStack } from "@chakra-ui/react";
 import AppCard from "@/components/AppCard";
+import AppPieChart from "@/components/charts/AppPieChart";
 export default async function Page() {
   const client = getApolloClient();
   let today = new Date();
@@ -78,8 +79,8 @@ export default async function Page() {
       {
         label: "Users",
         data: locationCounts,
-        backgroundColor: "rgba(107, 70, 193, 0.5)",
-        borderColor: "rgba(107, 70, 193, 1)",
+        // backgroundColor: "rgba(107, 70, 193, 0.5)",
+        // borderColor: "rgba(107, 70, 193, 1)",
         borderWidth: 1,
       },
     ],
@@ -96,33 +97,30 @@ export default async function Page() {
       py={20}
     >
       <AppCard>
-        <VStack spacing={4} align={"flex-start"} width={"100%"} height={"100%"}>
+        <VStack spacing={4} align={"center"} width={"100%"} height={"100%"}>
           <Text fontWeight={900} fontSize={20}>
-            Daily Active Users (DAU)
+            Daily Active Users
           </Text>
           <Text fontWeight={900} fontSize={20}>
-            Last 24h - {todayVisitors + yesterdayVisitors}
+            {todayVisitors + yesterdayVisitors} in 24h
           </Text>
           <Center h={"100%"} w={"100%"}>
-            <AppChartChart
-              data={uniqueVisitorsChartData}
-              y_label="Users per day"
-            />
+            <AppChartChart data={uniqueVisitorsChartData} y_label=" Users" />
           </Center>
         </VStack>
       </AppCard>
       <AppCard>
-        <VStack spacing={4} align={"flex-start"} width={"100%"} height={"90%"}>
+        <VStack spacing={4} align={"center"} width={"100%"} height={"90%"}>
           <Text fontWeight={900} fontSize={20}>
             Breakdown of users by country
           </Text>
           <Center h={"100%"} w={"100%"}>
-            <AppChartChart data={countryCityChartData} horizontal />
+            <AppPieChart data={countryCityChartData} />
           </Center>
         </VStack>
       </AppCard>
       <AppCard>
-        <VStack spacing={4} align={"flex-start"} width={"100%"} height={"90%"}>
+        <VStack spacing={4} align={"center"} width={"100%"} height={"90%"}>
           <Text fontWeight={900} fontSize={20}>
             Average session length
           </Text>

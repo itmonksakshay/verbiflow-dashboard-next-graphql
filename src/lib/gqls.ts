@@ -143,6 +143,5 @@ export const getEventCountById = async ({
       eventSchemaId: id,
     },
   });
-  // console.log(data);
   return data as IEventCount;
 };

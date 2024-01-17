@@ -44,60 +44,62 @@ const AppChartChart = ({
         options={{
           indexAxis: horizontal ? "y" : "x",
           maintainAspectRatio: false,
-          plugins: {},
+          // borderColor: "#ffffff",
+
           scales: {
             x: {
+              border: {
+                display: true,
+                color: "whitesmoke",
+              },
               ticks: {
-                display: x_label ? false : true,
                 color: "white",
+                align: "center",
               },
               grid: {
-                drawTicks: true,
                 drawOnChartArea: false,
                 color: "white",
+                offset: false,
               },
               beginAtZero: true,
               position: horizontal ? "top" : "bottom",
-              title: x_label
-                ? {
-                    display: true,
-                    color: "whitesmoke",
-                    text: x_label,
-                    font: {
-                      size: 16,
-                    },
-                  }
-                : undefined,
             },
             y: {
+              border: {
+                display: true,
+                color: "whitesmoke",
+              },
               ticks: {
                 color: "white",
+                stepSize: 1,
+                precision: 0,
                 font: horizontal
                   ? {
                       size: 10,
                     }
                   : undefined,
+                callback: (value, index, values) => {
+                  return value + (y_label || "");
+                },
               },
               grid: {
-                drawTicks: true,
                 drawOnChartArea: false,
                 color: "white",
+                offset: false,
               },
               beginAtZero: true,
               position: horizontal ? "right" : "left",
-              title: y_label
-                ? {
-                    display: true,
-                    color: "whitesmoke",
-                    text: y_label,
-                  }
-                : undefined,
             },
           },
           interaction: {
             mode: "nearest",
             intersect: false,
             axis: horizontal ? "y" : "x",
+          },
+          plugins: {
+            legend: {
+              display: false,
+            },
           },
         }}
       />
