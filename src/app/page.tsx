@@ -5,6 +5,7 @@ import {
   getCountryCityStats,
   getAverageSessions,
   getEvents,
+  getUniqueVisitorsByDate,
 } from "@/lib/gqls";
 import { Center, HStack, Text, VStack } from "@chakra-ui/react";
 import AppCard from "@/components/AppCard";
@@ -12,12 +13,20 @@ export default async function Page() {
   const client = getApolloClient();
   let today = new Date();
   let firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); // en-CA uses YYYY-MM-DD
-  // let yesterday = new Date(today);
-  // yesterday.setDate(yesterday.getDate() - 1);
-  // const { getUniqueVisitorCount } = await getUniqueVisitorsByDate({
-  //   date: yesterday.toLocaleDateString("en-CA"),
-  //   client,
-  // });
+  let yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const todayVisitors = (
+    await getUniqueVisitorsByDate({
+      date: today.toLocaleDateString("en-CA"),
+      client,
+    })
+  ).getUniqueVisitorCount;
+  const yesterdayVisitors = (
+    await getUniqueVisitorsByDate({
+      date: yesterday.toLocaleDateString("en-CA"),
+      client,
+    })
+  ).getUniqueVisitorCount;
   const { getUniqueVisitorsInterval } = await getUniqueVisitors({
     startingDate: firstDayOfMonth.toLocaleDateString("en-CA"),
     endingDate: today.toLocaleDateString("en-CA"),
@@ -91,6 +100,9 @@ export default async function Page() {
           <Text fontWeight={900} fontSize={20}>
             Daily Active Users (DAU)
           </Text>
+          <Text fontWeight={900} fontSize={20}>
+            Last 24h - {todayVisitors + yesterdayVisitors}
+          </Text>
           <Center h={"100%"} w={"100%"}>
             <AppChartChart
               data={uniqueVisitorsChartData}
@@ -125,7 +137,7 @@ export default async function Page() {
                 {getAverageSessionTime}
               </Text>
               <Text fontWeight={900} fontSize={"35px"} lineHeight={"45px"}>
-                m
+                s
               </Text>
             </HStack>
           </Center>

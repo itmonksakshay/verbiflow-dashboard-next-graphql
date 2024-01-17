@@ -29,10 +29,12 @@ const AppChartChart = ({
   data,
   horizontal,
   y_label,
+  x_label,
 }: {
   data: any;
   horizontal?: boolean;
   y_label?: string;
+  x_label?: string;
 }) => {
   return (
     <Container height={"90%"} width={"100%"}>
@@ -42,9 +44,11 @@ const AppChartChart = ({
         options={{
           indexAxis: horizontal ? "y" : "x",
           maintainAspectRatio: false,
+          plugins: {},
           scales: {
             x: {
               ticks: {
+                display: x_label ? false : true,
                 color: "white",
               },
               grid: {
@@ -54,6 +58,16 @@ const AppChartChart = ({
               },
               beginAtZero: true,
               position: horizontal ? "top" : "bottom",
+              title: x_label
+                ? {
+                    display: true,
+                    color: "whitesmoke",
+                    text: x_label,
+                    font: {
+                      size: 16,
+                    },
+                  }
+                : undefined,
             },
             y: {
               ticks: {

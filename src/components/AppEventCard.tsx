@@ -1,14 +1,10 @@
-import { Box, Center, Text, VStack } from "@chakra-ui/react";
-import AppChartChart from "./charts/AppChartChart";
-import { getEventCountById } from "@/lib/gqls";
-import { getApolloClient } from "@/lib/apolloClient";
+import { Box } from "@chakra-ui/react";
 
 export default function AppEventCard({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const client = getApolloClient();
   return (
     <Box
       w={"370px"}

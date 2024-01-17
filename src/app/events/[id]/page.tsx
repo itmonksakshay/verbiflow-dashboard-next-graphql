@@ -1,4 +1,5 @@
 import AppEventCard from "@/components/AppEventCard";
+import BrowserMockup from "@/components/BrowserMockup";
 import AppChartChart from "@/components/charts/AppChartChart";
 import { getApolloClient } from "@/lib/apolloClient";
 import { getEventCountById, getEvents } from "@/lib/gqls";
@@ -11,28 +12,51 @@ export default async function Page({ params }: { params: { id: string } }) {
     client,
     id: Number(schemaId),
   });
+  //   console.log(getEventCount);
 
-  const chartLabels = getEventCount.map((item) => item.date);
-  const chartCounts = getEventCount.map((item) =>
+  //   function formatDate(date) {
+  //     return date.toISOString().split("T")[0];
+  //   }
+
+  // Calculate the dates for the past 7 days, including today
+  const today = new Date();
+  const datesForLast7Days: string[] = [];
+  for (let i = 2; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(today.getDate() - i);
+    datesForLast7Days.push(date.toLocaleDateString("en-CA"));
+  }
+
+  const allDates = getEventCount.map((item) => item.date);
+  const allValues = getEventCount.map((item) =>
     item.data.map((v) => v.countValue)
   );
+
+  const initializedDataset: any[] = datesForLast7Days.map((date) => ({
+    date,
+    values: [],
+  }));
+
+  allDates.forEach((date, index) => {
+    const datasetIndex = datesForLast7Days.indexOf(date);
+    if (datasetIndex !== -1) {
+      initializedDataset[datasetIndex].values = allValues[index];
+    }
+  });
   const datasets: any = [];
 
-  chartCounts.forEach((valueArray, index) => {
-    valueArray.forEach((value, valueIndex) => {
+  initializedDataset.forEach((dayData, index) => {
+    dayData.values.forEach((value: any, valueIndex: any) => {
       if (!datasets[valueIndex]) {
         datasets[valueIndex] = {
           label: `Variant ${valueIndex + 1}`,
-          data: new Array(chartLabels.length).fill(null),
-          // backgroundColor: "rgba(107, 70, 193 0.5)",
-          // borderColor: "rgba(107, 70, 193, 1)",
-          // borderWidth: 1,
+          data: new Array(initializedDataset.length).fill(null),
           backgroundColor:
-            valueIndex + (1 % 2) == 1
-              ? "rgb(107, 70, 193,0.5)"
-              : "rgb(255, 165, 0,0.5)",
+            (valueIndex + 1) % 2 === 1
+              ? "rgba(107, 70, 193, 0.5)"
+              : "rgba(255, 165, 0, 0.5)",
           borderColor:
-            valueIndex + (1 % 2) == 1
+            (valueIndex + 1) % 2 === 1
               ? "rgb(107, 70, 193)"
               : "rgb(255, 165, 0)",
           borderWidth: 1,
@@ -43,7 +67,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   });
 
   const chartData = {
-    labels: chartLabels,
+    labels: initializedDataset.map((day) => day.date),
     datasets: datasets,
   };
   return (
@@ -57,11 +81,11 @@ export default async function Page({ params }: { params: { id: string } }) {
       px={8}
       overflow={"auto"}
     >
-      <Box height={"90%"}>
+      <Box height={"600px"} width={"500px"}>
         <AppChartChart data={chartData} />
       </Box>
-      <Box border={"1px solid whitesmoke"}>
-        <iframe src="https://verbiflow.com/" width="500" height="500"></iframe>
+      <Box border={"1px solid whitesmoke"} w={500} h={500}>
+        <BrowserMockup imageUrl="/assets/mockup.png" />
       </Box>
     </HStack>
   );

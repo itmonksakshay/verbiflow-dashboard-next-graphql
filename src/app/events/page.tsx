@@ -2,7 +2,7 @@ import AppEventCard from "@/components/AppEventCard";
 import AppChartChart from "@/components/charts/AppChartChart";
 import { getApolloClient } from "@/lib/apolloClient";
 import { getEventCountById, getEvents } from "@/lib/gqls";
-import { Center, HStack, Text, VStack } from "@chakra-ui/react";
+import { HStack, Text, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 
 export default async function Page() {
@@ -21,7 +21,13 @@ export default async function Page() {
     );
   });
   const schemas = await Promise.all(promises);
-  // console.log(counts[0]);
+  const today = new Date();
+  const datesForLast7Days: string[] = [];
+  for (let i = 2; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(today.getDate() - i);
+    datesForLast7Days.push(date.toLocaleDateString("en-CA"));
+  }
   return (
     <HStack
       h={"100%"}
@@ -34,27 +40,35 @@ export default async function Page() {
       overflow={"auto"}
     >
       {schemas.map((schema) => {
-        const chartLabels = schema.count.map((item) => item.date);
-        const chartCounts = schema.count.map((item) =>
+        const allDates = schema.count.map((item) => item.date);
+        const allValues = schema.count.map((item) =>
           item.data.map((v) => v.countValue)
         );
+        const initializedDataset: any[] = datesForLast7Days.map((date) => ({
+          date,
+          values: [],
+        }));
+
+        allDates.forEach((date, index) => {
+          const datasetIndex = datesForLast7Days.indexOf(date);
+          if (datasetIndex !== -1) {
+            initializedDataset[datasetIndex].values = allValues[index];
+          }
+        });
         const datasets: any = [];
 
-        chartCounts.forEach((valueArray, index) => {
-          valueArray.forEach((value, valueIndex) => {
+        initializedDataset.forEach((dayData, index) => {
+          dayData.values.forEach((value: any, valueIndex: any) => {
             if (!datasets[valueIndex]) {
               datasets[valueIndex] = {
                 label: `Variant ${valueIndex + 1}`,
-                data: new Array(chartLabels.length).fill(null),
-                // backgroundColor: "rgba(107, 70, 193 0.5)",
-                // borderColor: "rgba(107, 70, 193, 1)",
-                // borderWidth: 1,
+                data: new Array(initializedDataset.length).fill(null),
                 backgroundColor:
-                  valueIndex + (1 % 2) == 1
-                    ? "rgb(107, 70, 193,0.5)"
-                    : "rgb(255, 165, 0,0.5)",
+                  (valueIndex + 1) % 2 === 1
+                    ? "rgba(107, 70, 193, 0.5)"
+                    : "rgba(255, 165, 0, 0.5)",
                 borderColor:
-                  valueIndex + (1 % 2) == 1
+                  (valueIndex + 1) % 2 === 1
                     ? "rgb(107, 70, 193)"
                     : "rgb(255, 165, 0)",
                 borderWidth: 1,
@@ -65,7 +79,7 @@ export default async function Page() {
         });
 
         const chartData = {
-          labels: chartLabels,
+          labels: initializedDataset.map((day) => day.date),
           datasets: datasets,
         };
 
@@ -81,9 +95,9 @@ export default async function Page() {
                 <Text fontWeight={900} fontSize={20}>
                   {schema.name}
                 </Text>
-                <Center h={"100%"} w={"100%"}>
-                  <AppChartChart data={chartData} />
-                </Center>
+                {/* <Center h={"100%"} w={"100%"}> */}
+                <AppChartChart data={chartData} />
+                {/* </Center> */}
               </VStack>
             </AppEventCard>
           </Link>
