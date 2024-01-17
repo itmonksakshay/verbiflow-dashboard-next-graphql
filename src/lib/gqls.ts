@@ -21,6 +21,7 @@ export const getUniqueVisitorsByDate = async ({
 
   return data as IDailyVisitors;
 };
+
 interface ICountryCityStats {
   getEventByCountryCity: { country: string; city: string; count: number }[];
 }
@@ -41,9 +42,9 @@ export const getCountryCityStats = async ({
   const { data } = await client.query({
     query,
   });
-
   return data as ICountryCityStats;
 };
+
 interface IVisitorsInterval {
   getUniqueVisitorsInterval: { date: string; count: number }[];
 }
@@ -74,6 +75,74 @@ export const getUniqueVisitors = async ({
     query,
     variables: { startingDate, endingDate },
   });
-  //   console.log(data);
   return data as IVisitorsInterval;
+};
+
+interface IAverageSessionTime {
+  getAverageSessionTime: number;
+}
+export const getAverageSessions = async ({
+  client,
+}: {
+  client: ApolloClient<NormalizedCacheObject>;
+}): Promise<IAverageSessionTime> => {
+  const query = gql`
+    query GetAverageSessionTime {
+      getAverageSessionTime
+    }
+  `;
+  const { data } = await client.query({
+    query,
+  });
+  return data as IAverageSessionTime;
+};
+interface IEventSchemas {
+  getEventSchemas: { eventName: string; eventSchemaId: number }[];
+}
+export const getEvents = async ({
+  client,
+}: {
+  client: ApolloClient<NormalizedCacheObject>;
+}): Promise<IEventSchemas> => {
+  const query = gql`
+    query GetEventSchemas {
+      getEventSchemas {
+        eventSchemaId
+        eventName
+      }
+    }
+  `;
+  const { data } = await client.query({
+    query,
+  });
+  return data as IEventSchemas;
+};
+interface IEventCount {
+  getEventCount: { date: string; data: { countValue: number }[] }[];
+}
+export const getEventCountById = async ({
+  id,
+  client,
+}: {
+  id: number;
+  client: ApolloClient<NormalizedCacheObject>;
+}): Promise<IEventCount> => {
+  const query = gql`
+    query getEventCount($eventSchemaId: Int!) {
+      getEventCount(eventSchemaId: $eventSchemaId) {
+        date
+        data {
+          countValue
+        }
+      }
+    }
+  `;
+  const { data } = await client.query({
+    query,
+    variables: {
+      eventSchemaId: id,
+    },
+  });
+  // console.log(data);
+  return data as IEventCount;
 };

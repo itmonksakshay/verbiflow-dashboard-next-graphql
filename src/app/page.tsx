@@ -1,22 +1,23 @@
-import AppChartChart from "@/components/AppChartChart";
-import AppPieChart from "@/components/AppPieChart";
+import AppChartChart from "@/components/charts/AppChartChart";
 import { getApolloClient } from "@/lib/apolloClient";
 import {
-  getUniqueVisitorsByDate,
   getUniqueVisitors,
   getCountryCityStats,
+  getAverageSessions,
+  getEvents,
 } from "@/lib/gqls";
-import { Box, Container, HStack, Text, VStack } from "@chakra-ui/react";
+import { Center, HStack, Text, VStack } from "@chakra-ui/react";
+import AppCard from "@/components/AppCard";
 export default async function Home() {
   const client = getApolloClient();
   let today = new Date();
-  let yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
   let firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); // en-CA uses YYYY-MM-DD
-  const { getUniqueVisitorCount } = await getUniqueVisitorsByDate({
-    date: yesterday.toLocaleDateString("en-CA"),
-    client,
-  });
+  // let yesterday = new Date(today);
+  // yesterday.setDate(yesterday.getDate() - 1);
+  // const { getUniqueVisitorCount } = await getUniqueVisitorsByDate({
+  //   date: yesterday.toLocaleDateString("en-CA"),
+  //   client,
+  // });
   const { getUniqueVisitorsInterval } = await getUniqueVisitors({
     startingDate: firstDayOfMonth.toLocaleDateString("en-CA"),
     endingDate: today.toLocaleDateString("en-CA"),
@@ -34,82 +35,102 @@ export default async function Home() {
       {
         label: "Unique Visitors",
         data: uniqueVisitorsDataPoints,
-        backgroundColor: "rgba(107, 70, 193 0.5)",
+        backgroundColor: "rgba(107, 70, 193, 0.5)",
         borderColor: "rgba(107, 70, 193, 1)",
         borderWidth: 1,
       },
     ],
   };
-  const uniqueCities: Record<string, any> = {};
+  const uniqueCountries: Record<string, any> = {};
   const { getEventByCountryCity } = await getCountryCityStats({ client });
   getEventByCountryCity.forEach((event) => {
-    const key = `${event.country}-${event.city}`;
-    if (uniqueCities[key]) {
-      uniqueCities[key].count += event.count;
+    const key = event.country;
+    if (key === "-") {
+      return;
+    }
+    if (uniqueCountries[key]) {
+      uniqueCountries[key].count += event.count;
     } else {
-      uniqueCities[key] = {
+      uniqueCountries[key] = {
         country: event.country,
         city: event.city,
         count: event.count,
       };
     }
   });
-  const sortedData = Object.values(uniqueCities).sort(
+  const sortedData = Object.values(uniqueCountries).sort(
     (a, b) => b.count - a.count
   );
-  const locationLabels = sortedData.map((event) => event.city);
+  const locationLabels = sortedData.map((event) => event.country);
   const locationCounts = sortedData.map((event) => event.count);
   const countryCityChartData = {
     labels: locationLabels,
     datasets: [
       {
-        label: "Event Counts by City",
+        label: "Users",
         data: locationCounts,
+        backgroundColor: "rgba(107, 70, 193, 0.5)",
+        borderColor: "rgba(107, 70, 193, 1)",
+        borderWidth: 1,
       },
     ],
   };
+  const { getAverageSessionTime } = await getAverageSessions({ client });
+
   return (
-    <HStack h={"100%"} w={"100%"} spacing={4} px={8}>
-      <Box
-        w={"30%"}
-        h={"432px"}
-        borderRadius="30px"
-        overflow="hidden"
-        bg={"gray.800"}
-        py={8}
-        px={8}
-      >
+    <HStack
+      h={"100%"}
+      w={"100%"}
+      justify={"center"}
+      spacing={8}
+      align={"flex-start"}
+      py={20}
+    >
+      <AppCard>
         <VStack spacing={4} align={"flex-start"} width={"100%"} height={"100%"}>
-          <Text fontWeight={900}>Daily Active Users (DAU)</Text>
-          <HStack justify={"space-around"} width={"100%"}>
-            <VStack>
-              <Text>
-                {getUniqueVisitorCount}{" "}
-                {getUniqueVisitorCount === 1 ? "user" : "users"}
-              </Text>
-              <Text>Yesterday</Text>
-            </VStack>
-            <Text>from {firstDayOfMonth.toLocaleDateString("en-CA")}</Text>
-          </HStack>
-          <AppChartChart data={uniqueVisitorsChartData} />
+          <Text fontWeight={900} fontSize={20}>
+            Daily Active Users (DAU)
+          </Text>
+          <Center h={"100%"} w={"100%"}>
+            <AppChartChart
+              data={uniqueVisitorsChartData}
+              y_label="Users per day"
+            />
+          </Center>
         </VStack>
-      </Box>
-      <Box
-        w={"30%"}
-        h={"432px"}
-        borderRadius="30px"
-        overflow="hidden"
-        bg={"gray.800"}
-        py={8}
-        px={8}
-      >
+      </AppCard>
+      <AppCard>
         <VStack spacing={4} align={"flex-start"} width={"100%"} height={"90%"}>
-          <Text fontWeight={900} mb={6}>
+          <Text fontWeight={900} fontSize={20}>
             Breakdown of users by country
           </Text>
-          <AppChartChart data={countryCityChartData} />
+          <Center h={"100%"} w={"100%"}>
+            <AppChartChart data={countryCityChartData} horizontal />
+          </Center>
         </VStack>
-      </Box>
+      </AppCard>
+      <AppCard>
+        <VStack spacing={4} align={"flex-start"} width={"100%"} height={"90%"}>
+          <Text fontWeight={900} fontSize={20}>
+            Average session length
+          </Text>
+          <Center h={"100%"} w={"100%"}>
+            <HStack align={"end"}>
+              <Text
+                fontWeight={900}
+                fontSize={"50px"}
+                lineHeight={"50px"}
+                color={"purple.600"}
+              >
+                {getAverageSessionTime}
+              </Text>
+              <Text fontWeight={900} fontSize={"35px"} lineHeight={"45px"}>
+                m
+              </Text>
+            </HStack>
+          </Center>
+        </VStack>
+      </AppCard>
     </HStack>
   );
 }

@@ -26,13 +26,22 @@ ChartJS.register(
   Tooltip,
   Colors
 );
-const AppChartChart = ({ data }: { data: any }) => {
+const AppChartChart = ({
+  data,
+  horizontal,
+  y_label,
+}: {
+  data: any;
+  horizontal?: boolean;
+  y_label?: string;
+}) => {
   return (
-    <Container height={"100%"} width={"100%"}>
+    <Container height={"90%"} width={"100%"}>
       <Chart
         type="bar"
         data={data}
         options={{
+          indexAxis: horizontal ? "y" : "x",
           maintainAspectRatio: false,
           scales: {
             x: {
@@ -40,22 +49,43 @@ const AppChartChart = ({ data }: { data: any }) => {
                 color: "white",
               },
               grid: {
+                drawTicks: true,
+                drawOnChartArea: false,
                 color: "white",
               },
+              beginAtZero: true,
+              position: horizontal ? "top" : "bottom",
             },
             y: {
               ticks: {
                 color: "white",
+                font: horizontal
+                  ? {
+                      size: 10,
+                    }
+                  : undefined,
               },
               grid: {
+                drawTicks: true,
+                drawOnChartArea: false,
                 color: "white",
               },
               beginAtZero: true,
+              position: horizontal ? "right" : "left",
+              title: y_label
+                ? {
+                    display: true,
+                    color: "whitesmoke",
+                    text: y_label,
+                  }
+                : undefined,
             },
           },
-          //   borderColor: "rgb(107, 70, 193)",
-          //   backgroundColor: "rgb(107, 70, 193)",
-          //   color: "rgb(255, 255, 255)",
+          interaction: {
+            mode: "nearest",
+            intersect: false,
+            axis: horizontal ? "y" : "x",
+          },
         }}
       />
     </Container>

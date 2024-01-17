@@ -10,7 +10,7 @@ export default function Navbar() {
     return pathname === path;
   };
   return (
-    <VStack py={20} px={4} spacing={5}>
+    <VStack py={10} px={4} spacing={5}>
       <Image
         src={"/assets/verbiflow-logo.png"}
         alt="logo"
