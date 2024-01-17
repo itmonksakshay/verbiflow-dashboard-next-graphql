@@ -8,7 +8,7 @@ import {
 } from "@/lib/gqls";
 import { Center, HStack, Text, VStack } from "@chakra-ui/react";
 import AppCard from "@/components/AppCard";
-export default async function Home() {
+export default async function Page() {
   const client = getApolloClient();
   let today = new Date();
   let firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); // en-CA uses YYYY-MM-DD

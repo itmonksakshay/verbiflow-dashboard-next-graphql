@@ -2,9 +2,10 @@ import AppEventCard from "@/components/AppEventCard";
 import AppChartChart from "@/components/charts/AppChartChart";
 import { getApolloClient } from "@/lib/apolloClient";
 import { getEventCountById, getEvents } from "@/lib/gqls";
-import { Box, Center, HStack, Text, VStack } from "@chakra-ui/react";
+import { Center, HStack, Text, VStack } from "@chakra-ui/react";
+import Link from "next/link";
 
-export default async function Home() {
+export default async function Page() {
   const client = getApolloClient();
   const { getEventSchemas } = await getEvents({ client });
   const promises = getEventSchemas.map((schema) => {
@@ -69,21 +70,23 @@ export default async function Home() {
         };
 
         return (
-          <AppEventCard key={schema.id}>
-            <VStack
-              spacing={4}
-              align={"flex-start"}
-              width={"100%"}
-              height={"100%"}
-            >
-              <Text fontWeight={900} fontSize={20}>
-                {schema.name}
-              </Text>
-              <Center h={"100%"} w={"100%"}>
-                <AppChartChart data={chartData} />
-              </Center>
-            </VStack>
-          </AppEventCard>
+          <Link key={schema.id} passHref href={`/events/${schema.id}`}>
+            <AppEventCard>
+              <VStack
+                spacing={4}
+                align={"flex-start"}
+                width={"100%"}
+                height={"100%"}
+              >
+                <Text fontWeight={900} fontSize={20}>
+                  {schema.name}
+                </Text>
+                <Center h={"100%"} w={"100%"}>
+                  <AppChartChart data={chartData} />
+                </Center>
+              </VStack>
+            </AppEventCard>
+          </Link>
         );
       })}
     </HStack>

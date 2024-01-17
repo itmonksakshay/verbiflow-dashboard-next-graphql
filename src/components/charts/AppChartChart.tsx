@@ -6,7 +6,6 @@ import {
   LinearScale,
   Tooltip,
   PointElement,
-  LineElement,
   BarElement,
   Filler,
   Colors,
