@@ -84,7 +84,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       <Box height={"600px"} width={"500px"}>
         <AppChartChart data={chartData} />
       </Box>
-      <Box border={"1px solid whitesmoke"} w={500} h={500}>
+      <Box w={500} h={500}>
         <BrowserMockup imageUrl="/assets/mockup.png" />
       </Box>
     </HStack>
