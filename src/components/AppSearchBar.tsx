@@ -23,7 +23,7 @@ export default function AppSearchBar({ searchValue }: { searchValue: string }) {
   const handleSubmit = (val: string) => {
     setInputValue(val);
     debounce(() => {
-      const link = `/events?search=${inputValue.toLowerCase()}`;
+      const link = `/events?search=${val.toLowerCase()}`;
       router.replace(link);
     }, 1000);
   };

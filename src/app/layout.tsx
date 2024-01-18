@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="en" className={fonts.rubik.variable}>
       <body>
         <Providers>
-          <Center bg={"gray.800"} color={"whitesmoke"} height={"100vh"}>
+          <Center bg={"gray.800"} color={"whitesmoke"} height={"100dvh"}>
             <HStack width={"100%"} height={"100%"} align={"flex-start"}>
               <Navbar />
               <Center bg={"gray.900"} height={"100%"} width={"100%"}>

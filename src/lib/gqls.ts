@@ -118,7 +118,10 @@ export const getEvents = async ({
   return data as IEventSchemas;
 };
 interface IEventCount {
-  getEventCount: { date: string; data: { countValue: number }[] }[];
+  getEventCount: {
+    date: string;
+    data: { countValue: number; variantId: number }[];
+  }[];
 }
 export const getEventCountById = async ({
   id,
@@ -133,6 +136,7 @@ export const getEventCountById = async ({
         date
         data {
           countValue
+          variantId
         }
       }
     }

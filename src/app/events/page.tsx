@@ -28,12 +28,12 @@ export default async function Page({
   });
   let schemas = await Promise.all(promises);
   const today = new Date();
-  const datesForLast7Days: string[] = [];
+  const datesForLastDays: string[] = [];
   const DAYS = 3;
   for (let i = DAYS - 1; i >= 0; i--) {
     const date = new Date();
     date.setDate(today.getDate() - i);
-    datesForLast7Days.push(date.toLocaleDateString("en-CA"));
+    datesForLastDays.push(date.toLocaleDateString("en-CA"));
   }
   if (searchValue) {
     schemas = schemas.filter((item) => {
@@ -66,35 +66,40 @@ export default async function Page({
         overflow={"auto"}
       >
         {schemas.map((schema) => {
-          const datasets: any = [];
+          const datasetsMap: any = {}; // Use an object to map variantIds to datasets
 
-          datesForLast7Days.forEach((date, dateIndex) => {
-            schema.count.forEach((event, eventIndex) => {
-              event.data.forEach((variant, variantIndex) => {
-                if (!datasets[variantIndex]) {
-                  datasets[variantIndex] = {
-                    label: `Variant ${variantIndex + 1}`,
-                    data: new Array(datesForLast7Days.length).fill(0), // Initialize with zeros
+          datesForLastDays.forEach((date, dateIndex) => {
+            schema.count.forEach((event) => {
+              event.data.forEach((variant) => {
+                const variantId = variant.variantId; // Use variantId directly as the key
+                if (!datasetsMap[variantId]) {
+                  datasetsMap[variantId] = {
+                    label: `Variant ${variantId}`,
+                    data: new Array(datesForLastDays.length).fill(0), // Initialize with zero
                     backgroundColor:
-                      variantIndex % 2 === 0
+                      variantId % 2 === 1
                         ? "rgba(107, 70, 193, 0.5)"
                         : "rgba(255, 165, 0, 0.5)",
                     borderColor:
-                      variantIndex % 2 === 0
+                      variantId % 2 === 1
                         ? "rgb(107, 70, 193)"
                         : "rgb(255, 165, 0)",
                     borderWidth: 1,
                   };
                 }
-                // Fill the dataset with actual values or zeros
                 if (date === event.date) {
-                  datasets[variantIndex].data[dateIndex] = variant.countValue;
+                  datasetsMap[variantId].data[dateIndex] = variant.countValue;
                 }
               });
             });
           });
+          const datasets = Object.values(datasetsMap).sort((a: any, b: any) => {
+            const aId = parseInt(a.label.replace("Variant ", ""), 10);
+            const bId = parseInt(b.label.replace("Variant ", ""), 10);
+            return aId - bId;
+          });
           const chartData = {
-            labels: datesForLast7Days,
+            labels: datesForLastDays,
             datasets: datasets,
           };
           return (
@@ -109,7 +114,7 @@ export default async function Page({
                   <Text fontWeight={900} fontSize={20}>
                     {schema.name}
                   </Text>
-                  <AppChartChart data={chartData} />
+                  <AppChartChart data={chartData} y_title="Events" />
                 </VStack>
               </AppEventCard>
             </Link>

@@ -60,7 +60,12 @@ export default function BrowserMockup({ imageUrl }: { imageUrl: string }) {
           <Icon as={AiOutlineClose} />
         </Circle>
       </Flex>
-      <Image src={imageUrl} alt="Displayed content" />
+      <Image
+        src={imageUrl}
+        alt="Displayed content"
+        width={"100%"}
+        height={"344px"}
+      />
     </Box>
   );
 }

@@ -40,7 +40,6 @@ const AppPieChart = ({ data }: { data: any }) => {
             tooltip: {
               callbacks: {
                 label: (item) => {
-                  console.log(item);
                   const sum = item.dataset.data.reduce(
                     (acc: number, v: number) => {
                       return acc + v;

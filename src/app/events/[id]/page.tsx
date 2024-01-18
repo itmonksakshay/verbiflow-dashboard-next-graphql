@@ -36,29 +36,35 @@ export default async function Page({ params }: { params: { id: string } }) {
     date.setDate(today.getDate() - i);
     datesForLastDays.push(date.toLocaleDateString("en-CA"));
   }
-  const datasets: any = [];
+  const datasetsMap: any = {}; // Use an object to map variantIds to datasets
+
   datesForLastDays.forEach((date, dateIndex) => {
-    getEventCount.forEach((event, eventIndex) => {
-      event.data.forEach((variant, variantIndex) => {
-        if (!datasets[variantIndex]) {
-          datasets[variantIndex] = {
-            label: `Variant ${variantIndex + 1}`,
+    getEventCount.forEach((event) => {
+      event.data.forEach((variant) => {
+        const variantId = variant.variantId; // Use variantId directly as the key
+        if (!datasetsMap[variantId]) {
+          datasetsMap[variantId] = {
+            label: `Variant ${variantId}`,
             data: new Array(datesForLastDays.length).fill(0), // Initialize with zero
             backgroundColor:
-              variantIndex % 2 === 0
+              variantId % 2 === 1
                 ? "rgba(107, 70, 193, 0.5)"
                 : "rgba(255, 165, 0, 0.5)",
             borderColor:
-              variantIndex % 2 === 0 ? "rgb(107, 70, 193)" : "rgb(255, 165, 0)",
+              variantId % 2 === 1 ? "rgb(107, 70, 193)" : "rgb(255, 165, 0)",
             borderWidth: 1,
           };
         }
-        // Fill the dataset with actual values or zeros
         if (date === event.date) {
-          datasets[variantIndex].data[dateIndex] = variant.countValue;
+          datasetsMap[variantId].data[dateIndex] = variant.countValue;
         }
       });
     });
+  });
+  const datasets = Object.values(datasetsMap).sort((a: any, b: any) => {
+    const aId = parseInt(a.label.replace("Variant ", ""), 10);
+    const bId = parseInt(b.label.replace("Variant ", ""), 10);
+    return aId - bId;
   });
 
   const chartData = {
@@ -67,7 +73,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   };
 
   return (
-    <VStack w={"100%"} h={"100%"} py={20}>
+    <VStack w={"100%"} h={"100%"} py={4}>
       <Text fontWeight={900} fontSize={20}>
         {getEventSchema.eventName}
       </Text>
@@ -78,10 +84,9 @@ export default async function Page({ params }: { params: { id: string } }) {
         align={"center"}
         justifyContent={"space-around"}
         px={8}
-        overflow={"auto"}
       >
-        <Box height={"808px"} width={"500px"}>
-          <AppChartChart data={chartData} />
+        <Box height={"87%"} maxHeight={"808px"} width={"500px"}>
+          <AppChartChart data={chartData} y_title="Events" />
         </Box>
         <VStack gap={12} pt={20}>
           <AppEventCard width="500px">
@@ -116,7 +121,7 @@ export default async function Page({ params }: { params: { id: string } }) {
               </TableContainer>
             </VStack>
           </AppEventCard>
-          <Box w={500} h={500}>
+          <Box w={500} height={"100%"} maxHeight={"400px"}>
             <BrowserMockup imageUrl="/assets/mockup.png" />
           </Box>
         </VStack>
