@@ -17,6 +17,7 @@ export const getUniqueVisitorsByDate = async ({
   const { data } = await client.query({
     query,
     variables: { date },
+    fetchPolicy: "network-only",
   });
 
   return data as IDailyVisitors;
@@ -41,6 +42,7 @@ export const getCountryCityStats = async ({
   `;
   const { data } = await client.query({
     query,
+    fetchPolicy: "network-only",
   });
   return data as ICountryCityStats;
 };
@@ -74,6 +76,7 @@ export const getUniqueVisitors = async ({
   const { data } = await client.query({
     query,
     variables: { startingDate, endingDate },
+    fetchPolicy: "network-only",
   });
   return data as IVisitorsInterval;
 };
@@ -93,6 +96,7 @@ export const getAverageSessions = async ({
   `;
   const { data } = await client.query({
     query,
+    fetchPolicy: "network-only",
   });
   return data as IAverageSessionTime;
 };
@@ -101,8 +105,10 @@ interface IEventSchemas {
 }
 export const getEvents = async ({
   client,
+  cached,
 }: {
   client: ApolloClient<NormalizedCacheObject>;
+  cached: boolean;
 }): Promise<IEventSchemas> => {
   const query = gql`
     query GetEventSchemas {
@@ -114,6 +120,7 @@ export const getEvents = async ({
   `;
   const { data } = await client.query({
     query,
+    fetchPolicy: cached ? "cache-first" : "network-only",
   });
   return data as IEventSchemas;
 };
@@ -126,9 +133,11 @@ interface IEventCount {
 export const getEventCountById = async ({
   id,
   client,
+  cached,
 }: {
   id: number;
   client: ApolloClient<NormalizedCacheObject>;
+  cached: boolean;
 }): Promise<IEventCount> => {
   const query = gql`
     query getEventCount($eventSchemaId: Int!) {
@@ -146,6 +155,7 @@ export const getEventCountById = async ({
     variables: {
       eventSchemaId: id,
     },
+    fetchPolicy: cached ? "cache-first" : "network-only",
   });
   return data as IEventCount;
 };
@@ -171,6 +181,7 @@ export const getEventSchemaName = async ({
     variables: {
       eventSchemaId: id,
     },
+    fetchPolicy: "network-only",
   });
   return data as IEventName;
 };

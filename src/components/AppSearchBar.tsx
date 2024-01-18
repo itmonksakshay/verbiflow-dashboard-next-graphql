@@ -25,7 +25,7 @@ export default function AppSearchBar({ searchValue }: { searchValue: string }) {
     debounce(() => {
       const link = `/events?search=${val.toLowerCase()}`;
       router.replace(link);
-    }, 200);
+    }, 325);
   };
   return (
     <InputGroup w={"fit-content"}>

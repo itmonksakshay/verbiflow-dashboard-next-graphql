@@ -27,6 +27,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   const { getEventCount } = await getEventCountById({
     client,
     id: Number(schemaId),
+    cached: false,
   });
   const today = new Date();
   const datesForLastDays: string[] = [];
@@ -85,7 +86,7 @@ export default async function Page({ params }: { params: { id: string } }) {
         justifyContent={"space-around"}
         px={8}
       >
-        <Box height={"87%"} maxHeight={"808px"} width={"600px"}>
+        <Box height={"75%"} maxHeight={"750px"} width={"600px"}>
           <AppChartChart data={chartData} y_title="Events" />
         </Box>
         <VStack gap={4} justifyContent={"center"} alignItems={"center"}>

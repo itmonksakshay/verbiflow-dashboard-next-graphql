@@ -14,17 +14,22 @@ export default async function Page({
 }) {
   const searchValue = searchParams.search;
   const client = getApolloClient();
-  const { getEventSchemas } = await getEvents({ client });
+  const { getEventSchemas } = await getEvents({
+    client,
+    cached: !!searchValue,
+  });
   const promises = getEventSchemas.map((schema) => {
-    return getEventCountById({ client, id: schema.eventSchemaId }).then(
-      (count) => {
-        return {
-          id: schema.eventSchemaId,
-          name: schema.eventName,
-          count: count.getEventCount,
-        };
-      }
-    );
+    return getEventCountById({
+      client,
+      id: schema.eventSchemaId,
+      cached: !!searchValue,
+    }).then((count) => {
+      return {
+        id: schema.eventSchemaId,
+        name: schema.eventName,
+        count: count.getEventCount,
+      };
+    });
   });
   let schemas = await Promise.all(promises);
   const today = new Date();
