@@ -1,5 +1,5 @@
 import { Center, HStack } from "@chakra-ui/react";
-import { fonts } from "./fonts";
+import { fonts } from "../fonts";
 import { Providers } from "./providers";
 import Navbar from "@/components/Navbar";
 import { Metadata } from "next";

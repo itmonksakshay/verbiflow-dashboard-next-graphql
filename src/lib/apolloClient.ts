@@ -13,9 +13,6 @@ const getApolloClient = (): ApolloClient<NormalizedCacheObject> => {
         uri: process.env.GRAPHQL_ENDPOINT,
       }),
       cache: new InMemoryCache(),
-      headers: {
-        timedelta: String(-new Date().getTimezoneOffset() / 60),
-      },
     });
   }
   return client;
