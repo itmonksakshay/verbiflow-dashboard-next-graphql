@@ -24,6 +24,8 @@ export default function BrowserMockup({ imageUrl }: { imageUrl: string }) {
       borderRadius="lg"
       overflow="hidden"
       boxShadow="lg"
+      height={"100%"}
+      width={"100%"}
     >
       <Flex
         bg="gray.100"
@@ -45,7 +47,7 @@ export default function BrowserMockup({ imageUrl }: { imageUrl: string }) {
               borderColor: "transparent",
               boxShadow: "none",
             }} // Maintain styles on focus
-            width="full" // Full width of the container
+            width="100%" // Full width of the container
             pr="10" // Padding right to make room for the close button
           />
         </Box>
@@ -64,7 +66,7 @@ export default function BrowserMockup({ imageUrl }: { imageUrl: string }) {
         src={imageUrl}
         alt="Displayed content"
         width={"100%"}
-        height={"344px"}
+        height={"100%"}
       />
     </Box>
   );

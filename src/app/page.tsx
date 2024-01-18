@@ -98,9 +98,15 @@ export default async function Page() {
           <Text fontWeight={900} fontSize={20}>
             Daily Active Users
           </Text>
-          <Text fontWeight={700} fontSize={18}>
-            {todayVisitors + yesterdayVisitors} in 24h
-          </Text>
+
+          <VStack gap={0}>
+            <Text fontWeight={700} fontSize={25} color={"purple.600"}>
+              {todayVisitors + yesterdayVisitors}
+            </Text>
+            <Text fontWeight={700} fontSize={14} color={"gray.400"}>
+              in 24h
+            </Text>
+          </VStack>
           <Center h={"100%"} w={"100%"}>
             <AppChartChart data={uniqueVisitorsChartData} y_title="Users" />
           </Center>
@@ -131,7 +137,12 @@ export default async function Page() {
               >
                 {getAverageSessionTime}
               </Text>
-              <Text fontWeight={900} fontSize={"35px"} lineHeight={"45px"}>
+              <Text
+                fontWeight={900}
+                fontSize={"35px"}
+                lineHeight={"45px"}
+                color={"gray.400"}
+              >
                 s
               </Text>
             </HStack>

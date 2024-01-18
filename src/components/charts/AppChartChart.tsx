@@ -44,21 +44,20 @@ const AppChartChart = ({
         options={{
           indexAxis: horizontal ? "y" : "x",
           maintainAspectRatio: false,
-          // borderColor: "#ffffff",
 
           scales: {
             x: {
               border: {
                 display: true,
-                color: "whitesmoke",
+                color: "#a0aec0",
               },
               ticks: {
-                color: "white",
+                color: "#a0aec0",
                 align: "center",
               },
               grid: {
                 drawOnChartArea: false,
-                color: "white",
+                color: "#a0aec0",
                 offset: false,
               },
               beginAtZero: true,
@@ -67,10 +66,10 @@ const AppChartChart = ({
             y: {
               border: {
                 display: true,
-                color: "whitesmoke",
+                color: "#a0aec0",
               },
               ticks: {
-                color: "white",
+                color: "#a0aec0",
                 stepSize: 1,
                 precision: 0,
                 font: horizontal
@@ -84,7 +83,7 @@ const AppChartChart = ({
               },
               grid: {
                 drawOnChartArea: false,
-                color: "white",
+                color: "#a0aec0",
                 offset: false,
               },
               beginAtZero: true,
@@ -93,7 +92,7 @@ const AppChartChart = ({
                 ? {
                     display: true,
                     text: y_title,
-                    color: "whitesmoke",
+                    color: "#a0aec0",
                   }
                 : undefined,
             },

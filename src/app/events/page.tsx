@@ -79,11 +79,11 @@ export default async function Page({
                     backgroundColor:
                       variantId % 2 === 1
                         ? "rgba(107, 70, 193, 0.5)"
-                        : "rgba(255, 165, 0, 0.5)",
+                        : "rgba(255, 175, 204,0.5)",
                     borderColor:
                       variantId % 2 === 1
                         ? "rgb(107, 70, 193)"
-                        : "rgb(255, 165, 0)",
+                        : "rgb(255, 175, 204)",
                     borderWidth: 1,
                   };
                 }

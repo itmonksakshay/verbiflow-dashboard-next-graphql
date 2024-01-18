@@ -49,9 +49,9 @@ export default async function Page({ params }: { params: { id: string } }) {
             backgroundColor:
               variantId % 2 === 1
                 ? "rgba(107, 70, 193, 0.5)"
-                : "rgba(255, 165, 0, 0.5)",
+                : "rgba(255, 175, 204,0.5)",
             borderColor:
-              variantId % 2 === 1 ? "rgb(107, 70, 193)" : "rgb(255, 165, 0)",
+              variantId % 2 === 1 ? "rgb(107, 70, 193)" : "rgb(255, 175, 204)",
             borderWidth: 1,
           };
         }
@@ -85,11 +85,14 @@ export default async function Page({ params }: { params: { id: string } }) {
         justifyContent={"space-around"}
         px={8}
       >
-        <Box height={"87%"} maxHeight={"808px"} width={"500px"}>
+        <Box height={"87%"} maxHeight={"808px"} width={"600px"}>
           <AppChartChart data={chartData} y_title="Events" />
         </Box>
-        <VStack gap={12} pt={20}>
-          <AppEventCard width="500px">
+        <VStack gap={4} justifyContent={"center"} alignItems={"center"}>
+          <Box width={"350px"} height={"100%"} maxHeight={"400px"}>
+            <BrowserMockup imageUrl="/assets/mockup.png" />
+          </Box>
+          <AppEventCard width="400px">
             <VStack align={"center"} width={"100%"} height={"100%"}>
               <Text fontWeight={900} fontSize={20}>
                 Metadata Comparison
@@ -121,9 +124,6 @@ export default async function Page({ params }: { params: { id: string } }) {
               </TableContainer>
             </VStack>
           </AppEventCard>
-          <Box w={500} height={"100%"} maxHeight={"400px"}>
-            <BrowserMockup imageUrl="/assets/mockup.png" />
-          </Box>
         </VStack>
       </HStack>
     </VStack>
