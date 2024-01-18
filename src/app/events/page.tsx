@@ -3,6 +3,7 @@ import AppSearchBar from "@/components/AppSearchBar";
 import AppChartChart from "@/components/charts/AppChartChart";
 import { getApolloClient } from "@/lib/apolloClient";
 import { getEventCountById, getEvents } from "@/lib/gqls";
+import { levenshteinDistance } from "@/lib/utils";
 import { HStack, Text, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 
@@ -25,7 +26,7 @@ export default async function Page({
       }
     );
   });
-  const schemas = await Promise.all(promises);
+  let schemas = await Promise.all(promises);
   const today = new Date();
   const datesForLast7Days: string[] = [];
   const DAYS = 3;
@@ -34,7 +35,17 @@ export default async function Page({
     date.setDate(today.getDate() - i);
     datesForLast7Days.push(date.toLocaleDateString("en-CA"));
   }
-
+  if (searchValue) {
+    schemas = schemas.filter((item) => {
+      return (
+        item.name.toLowerCase().includes(searchValue.toLowerCase()) ||
+        item.name
+          .toLowerCase()
+          .replaceAll("_", " ")
+          .includes(searchValue.toLowerCase())
+      );
+    });
+  }
   return (
     <VStack
       overflow={"auto"}
@@ -54,69 +65,56 @@ export default async function Page({
         py={10}
         overflow={"auto"}
       >
-        {schemas
-          .filter((item) => {
-            if (!searchValue) {
-              return true;
-            }
-            // Check if the query is included in the name or description
-            return item.name.toLowerCase().includes(searchValue);
-          })
-          .map((schema) => {
-            // const allDates = schema.count.map((item) => item.date);
-            // const allValues = schema.count.map((item) =>
-            //   item.data.map((v) => v.countValue)
-            // );
+        {schemas.map((schema) => {
+          const datasets: any = [];
 
-            const datasets: any = [];
-
-            datesForLast7Days.forEach((date, dateIndex) => {
-              schema.count.forEach((event, eventIndex) => {
-                event.data.forEach((variant, variantIndex) => {
-                  if (!datasets[variantIndex]) {
-                    datasets[variantIndex] = {
-                      label: `Variant ${variantIndex + 1}`,
-                      data: new Array(datesForLast7Days.length).fill(0), // Initialize with zeros
-                      backgroundColor:
-                        variantIndex % 2 === 0
-                          ? "rgba(107, 70, 193, 0.5)"
-                          : "rgba(255, 165, 0, 0.5)",
-                      borderColor:
-                        variantIndex % 2 === 0
-                          ? "rgb(107, 70, 193)"
-                          : "rgb(255, 165, 0)",
-                      borderWidth: 1,
-                    };
-                  }
-                  // Fill the dataset with actual values or zeros
-                  if (date === event.date) {
-                    datasets[variantIndex].data[dateIndex] = variant.countValue;
-                  }
-                });
+          datesForLast7Days.forEach((date, dateIndex) => {
+            schema.count.forEach((event, eventIndex) => {
+              event.data.forEach((variant, variantIndex) => {
+                if (!datasets[variantIndex]) {
+                  datasets[variantIndex] = {
+                    label: `Variant ${variantIndex + 1}`,
+                    data: new Array(datesForLast7Days.length).fill(0), // Initialize with zeros
+                    backgroundColor:
+                      variantIndex % 2 === 0
+                        ? "rgba(107, 70, 193, 0.5)"
+                        : "rgba(255, 165, 0, 0.5)",
+                    borderColor:
+                      variantIndex % 2 === 0
+                        ? "rgb(107, 70, 193)"
+                        : "rgb(255, 165, 0)",
+                    borderWidth: 1,
+                  };
+                }
+                // Fill the dataset with actual values or zeros
+                if (date === event.date) {
+                  datasets[variantIndex].data[dateIndex] = variant.countValue;
+                }
               });
             });
-            const chartData = {
-              labels: datesForLast7Days,
-              datasets: datasets,
-            };
-            return (
-              <Link key={schema.id} passHref href={`/events/${schema.id}`}>
-                <AppEventCard>
-                  <VStack
-                    spacing={4}
-                    align={"flex-start"}
-                    width={"100%"}
-                    height={"100%"}
-                  >
-                    <Text fontWeight={900} fontSize={20}>
-                      {schema.name}
-                    </Text>
-                    <AppChartChart data={chartData} />
-                  </VStack>
-                </AppEventCard>
-              </Link>
-            );
-          })}
+          });
+          const chartData = {
+            labels: datesForLast7Days,
+            datasets: datasets,
+          };
+          return (
+            <Link key={schema.id} passHref href={`/events/${schema.id}`}>
+              <AppEventCard>
+                <VStack
+                  spacing={4}
+                  align={"flex-start"}
+                  width={"100%"}
+                  height={"100%"}
+                >
+                  <Text fontWeight={900} fontSize={20}>
+                    {schema.name}
+                  </Text>
+                  <AppChartChart data={chartData} />
+                </VStack>
+              </AppEventCard>
+            </Link>
+          );
+        })}
       </HStack>
     </VStack>
   );
