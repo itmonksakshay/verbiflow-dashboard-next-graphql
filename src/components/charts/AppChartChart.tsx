@@ -29,12 +29,12 @@ const AppChartChart = ({
   data,
   horizontal,
   y_label,
-  x_label,
+  y_title,
 }: {
   data: any;
   horizontal?: boolean;
   y_label?: string;
-  x_label?: string;
+  y_title?: string;
 }) => {
   return (
     <Container height={"90%"} width={"100%"}>
@@ -89,6 +89,13 @@ const AppChartChart = ({
               },
               beginAtZero: true,
               position: horizontal ? "right" : "left",
+              title: y_title
+                ? {
+                    display: true,
+                    text: y_title,
+                    color: "whitesmoke",
+                  }
+                : undefined,
             },
           },
           interaction: {

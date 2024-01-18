@@ -111,9 +111,7 @@ export default async function Page({
                     <Text fontWeight={900} fontSize={20}>
                       {schema.name}
                     </Text>
-                    {/* <Center h={"100%"} w={"100%"}> */}
                     <AppChartChart data={chartData} />
-                    {/* </Center> */}
                   </VStack>
                 </AppEventCard>
               </Link>

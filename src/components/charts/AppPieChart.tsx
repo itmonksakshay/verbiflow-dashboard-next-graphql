@@ -12,6 +12,8 @@ import {
   RadialLinearScale,
   ArcElement,
   BarController,
+  TooltipModel,
+  TooltipItem,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
 
@@ -33,30 +35,27 @@ const AppPieChart = ({ data }: { data: any }) => {
       <Chart
         type="pie"
         data={data}
-        // options={{
-        //   scales: {
-        //     x: {
-        //       ticks: {
-        //         color: "white",
-        //       },
-        //       grid: {
-        //         color: "white",
-        //       },
-        //     },
-        //     y: {
-        //       ticks: {
-        //         color: "white",
-        //       },
-        //       grid: {
-        //         color: "white",
-        //       },
-        //       beginAtZero: true,
-        //     },
-        //   },
-        //   //   borderColor: "rgb(107, 70, 193)",
-        //   //   backgroundColor: "rgb(107, 70, 193)",
-        //   //   color: "rgb(255, 255, 255)",
-        // }}
+        options={{
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: (item) => {
+                  console.log(item);
+                  const sum = item.dataset.data.reduce(
+                    (acc: number, v: number) => {
+                      return acc + v;
+                    },
+                    0
+                  );
+                  const percentage = ((item.parsed / sum) * 100).toFixed(2);
+                  return `${item.dataset.label!}: ${
+                    item.parsed
+                  } (${percentage}%)`;
+                },
+              },
+            },
+          },
+        }}
       />
     </Container>
   );

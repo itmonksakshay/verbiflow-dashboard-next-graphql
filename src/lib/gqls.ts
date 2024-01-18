@@ -145,3 +145,28 @@ export const getEventCountById = async ({
   });
   return data as IEventCount;
 };
+interface IEventName {
+  getEventSchema: { eventName: string };
+}
+export const getEventSchemaName = async ({
+  id,
+  client,
+}: {
+  id: number;
+  client: ApolloClient<NormalizedCacheObject>;
+}): Promise<IEventName> => {
+  const query = gql`
+    query getEventSchema($eventSchemaId: Int!) {
+      getEventSchema(eventSchemaId: $eventSchemaId) {
+        eventName
+      }
+    }
+  `;
+  const { data } = await client.query({
+    query,
+    variables: {
+      eventSchemaId: id,
+    },
+  });
+  return data as IEventName;
+};

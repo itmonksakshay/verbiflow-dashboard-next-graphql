@@ -28,29 +28,29 @@ export default async function Page() {
       client,
     })
   ).getUniqueVisitorCount;
-  const { getUniqueVisitorsInterval } = await getUniqueVisitors({
-    startingDate: firstDayOfMonth.toLocaleDateString("en-CA"),
-    endingDate: today.toLocaleDateString("en-CA"),
-    client,
-  });
-  const uniqueVisitorsLabels = getUniqueVisitorsInterval.map(
-    (item) => item.date
-  );
-  const uniqueVisitorsDataPoints = getUniqueVisitorsInterval.map(
-    (item) => item.count
-  );
-  const uniqueVisitorsChartData = {
-    labels: uniqueVisitorsLabels,
-    datasets: [
-      {
-        label: "Unique Visitors",
-        data: uniqueVisitorsDataPoints,
-        backgroundColor: "rgba(107, 70, 193, 0.5)",
-        borderColor: "rgba(107, 70, 193, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
+  // const { getUniqueVisitorsInterval } = await getUniqueVisitors({
+  //   startingDate: firstDayOfMonth.toLocaleDateString("en-CA"),
+  //   endingDate: today.toLocaleDateString("en-CA"),
+  //   client,
+  // });
+  // const uniqueVisitorsLabels = getUniqueVisitorsInterval.map(
+  //   (item) => item.date
+  // );
+  // const uniqueVisitorsDataPoints = getUniqueVisitorsInterval.map(
+  //   (item) => item.count
+  // );
+  // const uniqueVisitorsChartData = {
+  //   labels: uniqueVisitorsLabels,
+  //   datasets: [
+  //     {
+  //       label: "Unique Visitors",
+  //       data: uniqueVisitorsDataPoints,
+  //       backgroundColor: "rgba(107, 70, 193, 0.5)",
+  //       borderColor: "rgba(107, 70, 193, 1)",
+  //       borderWidth: 1,
+  //     },
+  //   ],
+  // };
   const uniqueCountries: Record<string, any> = {};
   const { getEventByCountryCity } = await getCountryCityStats({ client });
   getEventByCountryCity.forEach((event) => {
@@ -79,8 +79,6 @@ export default async function Page() {
       {
         label: "Users",
         data: locationCounts,
-        // backgroundColor: "rgba(107, 70, 193, 0.5)",
-        // borderColor: "rgba(107, 70, 193, 1)",
         borderWidth: 1,
       },
     ],
@@ -101,11 +99,11 @@ export default async function Page() {
           <Text fontWeight={900} fontSize={20}>
             Daily Active Users
           </Text>
-          <Text fontWeight={900} fontSize={20}>
+          <Text fontWeight={700} fontSize={18}>
             {todayVisitors + yesterdayVisitors} in 24h
           </Text>
           <Center h={"100%"} w={"100%"}>
-            <AppChartChart data={uniqueVisitorsChartData} y_label=" Users" />
+            <AppChartChart data={countryCityChartData} y_title="Users" />
           </Center>
         </VStack>
       </AppCard>
