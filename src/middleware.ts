@@ -12,8 +12,7 @@ export function middleware(request: NextRequest) {
   ) {
     return NextResponse.redirect(`${base}/loading?to=${pathname}${search}`);
   }
-  const response = NextResponse.next();
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {
