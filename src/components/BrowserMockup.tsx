@@ -37,18 +37,18 @@ export default function BrowserMockup({ imageUrl }: { imageUrl: string }) {
           <Input
             value="https://verbiflow.com"
             readOnly
-            color="white" // Text color
-            bg="#4B5563" // A grayish tone, similar to Chrome's search bar; adjust as needed
-            borderColor="transparent" // To remove any default border styling
-            borderRadius="md" // Medium rounded corners
-            _hover={{ bg: "#4B5563", borderColor: "transparent" }} // Maintain styles on hover
+            color="white"
+            bg="#4B5563"
+            borderColor="transparent"
+            borderRadius="md"
+            _hover={{ bg: "#4B5563", borderColor: "transparent" }}
             _focus={{
               bg: "#4B5563",
               borderColor: "transparent",
               boxShadow: "none",
-            }} // Maintain styles on focus
-            width="100%" // Full width of the container
-            pr="10" // Padding right to make room for the close button
+            }}
+            width="100%"
+            pr="10"
           />
         </Box>
         <Circle

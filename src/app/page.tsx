@@ -15,7 +15,7 @@ export default async function Page() {
   const offsetValue = nextCookies.get("timezoneOffset")!.value;
   const client = getApolloClient();
   let today = new Date();
-  let firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); // en-CA uses YYYY-MM-DD
+  let firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
   let yesterday = new Date(today);
   yesterday.setDate(yesterday.getDate() - 1);
   const todayVisitors = (

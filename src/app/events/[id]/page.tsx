@@ -41,16 +41,16 @@ export default async function Page({ params }: { params: { id: string } }) {
     date.setDate(today.getDate() - i);
     datesForLastDays.push(date.toLocaleDateString("en-CA"));
   }
-  const datasetsMap: any = {}; // Use an object to map variantIds to datasets
+  const datasetsMap: any = {};
 
   datesForLastDays.forEach((date, dateIndex) => {
     getEventCount.forEach((event) => {
       event.data.forEach((variant) => {
-        const variantId = variant.variantId; // Use variantId directly as the key
+        const variantId = variant.variantId;
         if (!datasetsMap[variantId]) {
           datasetsMap[variantId] = {
             label: `Variant ${variantId}`,
-            data: new Array(datesForLastDays.length).fill(0), // Initialize with zero
+            data: new Array(datesForLastDays.length).fill(0),
             backgroundColor:
               variantId % 2 === 1
                 ? "rgba(107, 70, 193, 0.5)"

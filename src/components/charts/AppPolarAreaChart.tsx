@@ -27,34 +27,7 @@ ChartJS.register(
 const AppPolarAreaChart = ({ data }: { data: any }) => {
   return (
     <Container>
-      <Chart
-        type="polarArea"
-        data={data}
-        // options={{
-        //   scales: {
-        //     x: {
-        //       ticks: {
-        //         color: "white",
-        //       },
-        //       grid: {
-        //         color: "white",
-        //       },
-        //     },
-        //     y: {
-        //       ticks: {
-        //         color: "white",
-        //       },
-        //       grid: {
-        //         color: "white",
-        //       },
-        //       beginAtZero: true,
-        //     },
-        //   },
-        //   //   borderColor: "rgb(107, 70, 193)",
-        //   //   backgroundColor: "rgb(107, 70, 193)",
-        //   //   color: "rgb(255, 255, 255)",
-        // }}
-      />
+      <Chart type="polarArea" data={data} />
     </Container>
   );
 };
