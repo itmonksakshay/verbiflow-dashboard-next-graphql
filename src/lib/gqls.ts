@@ -5,9 +5,11 @@ interface IDailyVisitors {
 export const getUniqueVisitorsByDate = async ({
   date,
   client,
+  timezoneOffset,
 }: {
   date: string;
   client: ApolloClient<NormalizedCacheObject>;
+  timezoneOffset: string;
 }): Promise<IDailyVisitors> => {
   const query = gql`
     query GetUniqueVisitorCount($date: String!) {
@@ -18,6 +20,11 @@ export const getUniqueVisitorsByDate = async ({
     query,
     variables: { date },
     fetchPolicy: "network-only",
+    context: {
+      headers: {
+        timedelta: timezoneOffset,
+      },
+    },
   });
 
   return data as IDailyVisitors;
@@ -28,8 +35,10 @@ interface ICountryCityStats {
 }
 export const getCountryCityStats = async ({
   client,
+  timezoneOffset,
 }: {
   client: ApolloClient<NormalizedCacheObject>;
+  timezoneOffset: string;
 }): Promise<ICountryCityStats> => {
   const query = gql`
     query GetEventByCountryCity {
@@ -43,6 +52,11 @@ export const getCountryCityStats = async ({
   const { data } = await client.query({
     query,
     fetchPolicy: "network-only",
+    context: {
+      headers: {
+        timedelta: timezoneOffset,
+      },
+    },
   });
   return data as ICountryCityStats;
 };
@@ -54,10 +68,12 @@ export const getUniqueVisitors = async ({
   startingDate,
   endingDate,
   client,
+  timezoneOffset,
 }: {
   startingDate: string;
   endingDate: string;
   client: ApolloClient<NormalizedCacheObject>;
+  timezoneOffset: string;
 }): Promise<IVisitorsInterval> => {
   const query = gql`
     query GetUniqueVisitorsInterval(
@@ -77,6 +93,11 @@ export const getUniqueVisitors = async ({
     query,
     variables: { startingDate, endingDate },
     fetchPolicy: "network-only",
+    context: {
+      headers: {
+        timedelta: timezoneOffset,
+      },
+    },
   });
   return data as IVisitorsInterval;
 };
@@ -86,8 +107,10 @@ interface IAverageSessionTime {
 }
 export const getAverageSessions = async ({
   client,
+  timezoneOffset,
 }: {
   client: ApolloClient<NormalizedCacheObject>;
+  timezoneOffset: string;
 }): Promise<IAverageSessionTime> => {
   const query = gql`
     query GetAverageSessionTime {
@@ -97,6 +120,11 @@ export const getAverageSessions = async ({
   const { data } = await client.query({
     query,
     fetchPolicy: "network-only",
+    context: {
+      headers: {
+        timedelta: timezoneOffset,
+      },
+    },
   });
   return data as IAverageSessionTime;
 };
@@ -106,9 +134,11 @@ interface IEventSchemas {
 export const getEvents = async ({
   client,
   cached,
+  timezoneOffset,
 }: {
   client: ApolloClient<NormalizedCacheObject>;
   cached: boolean;
+  timezoneOffset: string;
 }): Promise<IEventSchemas> => {
   const query = gql`
     query GetEventSchemas {
@@ -121,6 +151,11 @@ export const getEvents = async ({
   const { data } = await client.query({
     query,
     fetchPolicy: cached ? "cache-first" : "network-only",
+    context: {
+      headers: {
+        timedelta: timezoneOffset,
+      },
+    },
   });
   return data as IEventSchemas;
 };
@@ -134,10 +169,12 @@ export const getEventCountById = async ({
   id,
   client,
   cached,
+  timezoneOffset,
 }: {
   id: number;
   client: ApolloClient<NormalizedCacheObject>;
   cached: boolean;
+  timezoneOffset: string;
 }): Promise<IEventCount> => {
   const query = gql`
     query getEventCount($eventSchemaId: Int!) {
@@ -156,7 +193,13 @@ export const getEventCountById = async ({
       eventSchemaId: id,
     },
     fetchPolicy: cached ? "cache-first" : "network-only",
+    context: {
+      headers: {
+        timedelta: timezoneOffset,
+      },
+    },
   });
+
   return data as IEventCount;
 };
 interface IEventName {
@@ -165,9 +208,11 @@ interface IEventName {
 export const getEventSchemaName = async ({
   id,
   client,
+  timezoneOffset,
 }: {
   id: number;
   client: ApolloClient<NormalizedCacheObject>;
+  timezoneOffset: string;
 }): Promise<IEventName> => {
   const query = gql`
     query getEventSchema($eventSchemaId: Int!) {
@@ -182,6 +227,11 @@ export const getEventSchemaName = async ({
       eventSchemaId: id,
     },
     fetchPolicy: "network-only",
+    context: {
+      headers: {
+        timedelta: timezoneOffset,
+      },
+    },
   });
   return data as IEventName;
 };

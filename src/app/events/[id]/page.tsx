@@ -16,18 +16,22 @@ import {
   Tr,
   VStack,
 } from "@chakra-ui/react";
-
+import { cookies } from "next/headers";
 export default async function Page({ params }: { params: { id: string } }) {
+  const nextCookies = cookies();
+  const offsetValue = nextCookies.get("timezoneOffset")!.value;
   const client = getApolloClient();
   const schemaId = params.id;
   const { getEventSchema } = await getEventSchemaName({
     client,
     id: Number(schemaId),
+    timezoneOffset: offsetValue,
   });
   const { getEventCount } = await getEventCountById({
     client,
     id: Number(schemaId),
     cached: false,
+    timezoneOffset: offsetValue,
   });
   const today = new Date();
   const datesForLastDays: string[] = [];

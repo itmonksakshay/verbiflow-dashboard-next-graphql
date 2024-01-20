@@ -9,7 +9,10 @@ import {
 import { Center, HStack, Text, VStack } from "@chakra-ui/react";
 import AppCard from "@/components/AppCard";
 import AppPieChart from "@/components/charts/AppPieChart";
+import { cookies } from "next/headers";
 export default async function Page() {
+  const nextCookies = cookies();
+  const offsetValue = nextCookies.get("timezoneOffset")!.value;
   const client = getApolloClient();
   let today = new Date();
   let firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1); // en-CA uses YYYY-MM-DD
@@ -19,18 +22,21 @@ export default async function Page() {
     await getUniqueVisitorsByDate({
       date: today.toLocaleDateString("en-CA"),
       client,
+      timezoneOffset: offsetValue,
     })
   ).getUniqueVisitorCount;
   const yesterdayVisitors = (
     await getUniqueVisitorsByDate({
       date: yesterday.toLocaleDateString("en-CA"),
       client,
+      timezoneOffset: offsetValue,
     })
   ).getUniqueVisitorCount;
   const { getUniqueVisitorsInterval } = await getUniqueVisitors({
     startingDate: firstDayOfMonth.toLocaleDateString("en-CA"),
     endingDate: today.toLocaleDateString("en-CA"),
     client,
+    timezoneOffset: offsetValue,
   });
   const uniqueVisitorsLabels = getUniqueVisitorsInterval.map(
     (item) => item.date
@@ -51,7 +57,10 @@ export default async function Page() {
     ],
   };
   const uniqueCountries: Record<string, any> = {};
-  const { getEventByCountryCity } = await getCountryCityStats({ client });
+  const { getEventByCountryCity } = await getCountryCityStats({
+    client,
+    timezoneOffset: offsetValue,
+  });
   getEventByCountryCity.forEach((event) => {
     const key = event.country;
     if (key === "-") {
@@ -82,7 +91,10 @@ export default async function Page() {
       },
     ],
   };
-  const { getAverageSessionTime } = await getAverageSessions({ client });
+  const { getAverageSessionTime } = await getAverageSessions({
+    client,
+    timezoneOffset: offsetValue,
+  });
 
   return (
     <HStack

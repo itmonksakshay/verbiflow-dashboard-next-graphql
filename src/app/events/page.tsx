@@ -3,26 +3,29 @@ import AppSearchBar from "@/components/AppSearchBar";
 import AppChartChart from "@/components/charts/AppChartChart";
 import { getApolloClient } from "@/lib/apolloClient";
 import { getEventCountById, getEvents } from "@/lib/gqls";
-import { levenshteinDistance } from "@/lib/utils";
 import { HStack, Text, VStack } from "@chakra-ui/react";
 import Link from "next/link";
-
+import { cookies } from "next/headers";
 export default async function Page({
   searchParams,
 }: {
   searchParams: { search: string };
 }) {
+  const nextCookies = cookies();
+  const offsetValue = nextCookies.get("timezoneOffset")!.value;
   const searchValue = searchParams.search;
   const client = getApolloClient();
   const { getEventSchemas } = await getEvents({
     client,
     cached: !!searchValue,
+    timezoneOffset: offsetValue,
   });
   const promises = getEventSchemas.map((schema) => {
     return getEventCountById({
       client,
       id: schema.eventSchemaId,
       cached: !!searchValue,
+      timezoneOffset: offsetValue,
     }).then((count) => {
       return {
         id: schema.eventSchemaId,

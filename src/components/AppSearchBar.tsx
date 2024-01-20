@@ -1,13 +1,7 @@
 "use client";
-import {
-  Input,
-  InputGroup,
-  InputLeftElement,
-  InputRightElement,
-} from "@chakra-ui/react";
+import { Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FaSearchLocation } from "react-icons/fa";
 import { MdOutlineSearch } from "react-icons/md";
 
 export default function AppSearchBar({ searchValue }: { searchValue: string }) {
