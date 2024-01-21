@@ -6,6 +6,7 @@ import { getEventCountById, getEvents } from "@/lib/gqls";
 import { HStack, Text, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 import { cookies } from "next/headers";
+import { adjustDateForTimezone } from "@/lib/utils";
 export default async function Page({
   searchParams,
 }: {
@@ -35,7 +36,7 @@ export default async function Page({
     });
   });
   let schemas = await Promise.all(promises);
-  const today = new Date();
+  const today = adjustDateForTimezone(new Date(), Number(offsetValue));
   const datesForLastDays: string[] = [];
   const DAYS = 3;
   for (let i = DAYS - 1; i >= 0; i--) {

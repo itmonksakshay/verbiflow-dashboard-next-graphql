@@ -3,8 +3,10 @@ import BrowserMockup from "@/components/BrowserMockup";
 import AppChartChart from "@/components/charts/AppChartChart";
 import { getApolloClient } from "@/lib/apolloClient";
 import { getEventCountById, getEventSchemaName } from "@/lib/gqls";
+import { adjustDateForTimezone } from "@/lib/utils";
 import {
   Box,
+  Center,
   HStack,
   Table,
   TableContainer,
@@ -33,7 +35,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     cached: false,
     timezoneOffset: offsetValue,
   });
-  const today = new Date();
+  const today = adjustDateForTimezone(new Date(), Number(offsetValue));
   const datesForLastDays: string[] = [];
   const DAYS = 7;
   for (let i = DAYS - 1; i >= 0; i--) {
@@ -78,59 +80,61 @@ export default async function Page({ params }: { params: { id: string } }) {
   };
 
   return (
-    <VStack w={"100%"} h={"100%"} py={4}>
-      <Text fontWeight={900} fontSize={20}>
-        {getEventSchema.eventName}
-      </Text>
-      <HStack
-        h={"100%"}
-        w={"100%"}
-        wrap={"wrap"}
-        align={"center"}
-        justifyContent={"space-around"}
-        px={8}
-      >
-        <Box height={"75%"} maxHeight={"750px"} width={"600px"}>
-          <AppChartChart data={chartData} y_title="Events" />
-        </Box>
-        <VStack gap={4} justifyContent={"center"} alignItems={"center"}>
-          <Box width={"350px"} height={"100%"} maxHeight={"400px"}>
-            <BrowserMockup imageUrl="/assets/mockup.png" />
+    <Center w={"100%"} h={"100%"} overflow={"auto"}>
+      <VStack w={"100%"}>
+        <Text fontWeight={900} fontSize={20} py={"min(1.5vh,37.5px)"}>
+          {getEventSchema.eventName}
+        </Text>
+        <HStack
+          h={"100%"}
+          w={"100%"}
+          wrap={"wrap"}
+          align={"flex-start"}
+          justifyContent={"space-around"}
+          px={8}
+        >
+          <Box height={"661px"} width={"600px"}>
+            <AppChartChart data={chartData} y_title="Events" h="100%" />
           </Box>
-          <AppEventCard width="400px">
-            <VStack align={"center"} width={"100%"} height={"100%"}>
-              <Text fontWeight={900} fontSize={20}>
-                Metadata Comparison
-              </Text>
-              <TableContainer whiteSpace={"wrap"}>
-                <Table variant="simple">
-                  <Thead>
-                    <Tr>
-                      <Th color={"purple.500"}>Name</Th>
-                      <Th color={"purple.500"}>Attribute</Th>
-                      <Th color={"purple.500"} isNumeric>
-                        Value
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    <Tr>
-                      <Td>metadata name</Td>
-                      <Td>Average length IF STRING</Td>
-                      <Td isNumeric>25.4</Td>
-                    </Tr>
-                    <Tr>
-                      <Td>metadata 2 name</Td>
-                      <Td>Mean IF NUMBER</Td>
-                      <Td isNumeric>30.48</Td>
-                    </Tr>
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </VStack>
-          </AppEventCard>
-        </VStack>
-      </HStack>
-    </VStack>
+          <VStack gap={3} justifyContent={"flex-start"} alignItems={"center"}>
+            <Box width={"390px"} height={"100%"} maxHeight={"400px"}>
+              <BrowserMockup imageUrl="/assets/mockup.png" />
+            </Box>
+            <AppEventCard width="400px">
+              <VStack align={"center"} width={"100%"} height={"100%"}>
+                <Text fontWeight={900} fontSize={20}>
+                  Metadata Comparison
+                </Text>
+                <TableContainer whiteSpace={"wrap"}>
+                  <Table variant="simple">
+                    <Thead>
+                      <Tr>
+                        <Th color={"purple.500"}>Name</Th>
+                        <Th color={"purple.500"}>Attribute</Th>
+                        <Th color={"purple.500"} isNumeric>
+                          Value
+                        </Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      <Tr>
+                        <Td>metadata name</Td>
+                        <Td>Average length IF STRING</Td>
+                        <Td isNumeric>25.4</Td>
+                      </Tr>
+                      <Tr>
+                        <Td>metadata 2 name</Td>
+                        <Td>Mean IF NUMBER</Td>
+                        <Td isNumeric>30.48</Td>
+                      </Tr>
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              </VStack>
+            </AppEventCard>
+          </VStack>
+        </HStack>
+      </VStack>
+    </Center>
   );
 }

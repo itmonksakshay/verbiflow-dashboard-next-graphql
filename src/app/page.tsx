@@ -10,13 +10,16 @@ import { Center, HStack, Text, VStack } from "@chakra-ui/react";
 import AppCard from "@/components/AppCard";
 import AppPieChart from "@/components/charts/AppPieChart";
 import { cookies } from "next/headers";
+import { adjustDateForTimezone } from "@/lib/utils";
 export default async function Page() {
   const nextCookies = cookies();
   const offsetValue = nextCookies.get("timezoneOffset")!.value;
   const client = getApolloClient();
-  let today = new Date();
-  let firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+  const today = adjustDateForTimezone(new Date(), Number(offsetValue));
+  // console.log(today.toISOString());
+  let weekAgo = new Date(today);
   let yesterday = new Date(today);
+  weekAgo.setDate(yesterday.getDate() - 7);
   yesterday.setDate(yesterday.getDate() - 1);
   const todayVisitors = (
     await getUniqueVisitorsByDate({
@@ -33,7 +36,7 @@ export default async function Page() {
     })
   ).getUniqueVisitorCount;
   const { getUniqueVisitorsInterval } = await getUniqueVisitors({
-    startingDate: firstDayOfMonth.toLocaleDateString("en-CA"),
+    startingDate: weekAgo.toLocaleDateString("en-CA"),
     endingDate: today.toLocaleDateString("en-CA"),
     client,
     timezoneOffset: offsetValue,
@@ -56,6 +59,7 @@ export default async function Page() {
       },
     ],
   };
+  // console.log(uniqueVisitorsChartData);
   const uniqueCountries: Record<string, any> = {};
   const { getEventByCountryCity } = await getCountryCityStats({
     client,

@@ -30,14 +30,16 @@ const AppChartChart = ({
   horizontal,
   y_label,
   y_title,
+  h,
 }: {
   data: any;
   horizontal?: boolean;
   y_label?: string;
   y_title?: string;
+  h?: string;
 }) => {
   return (
-    <Container height={"90%"} width={"100%"}>
+    <Container height={h || "90%"} width={"100%"}>
       <Chart
         type="bar"
         data={data}

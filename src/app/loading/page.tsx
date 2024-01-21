@@ -1,6 +1,6 @@
 "use client";
 
-import { setCookieClientSide } from "@/lib/utils";
+import { setCookieClientSide } from "@/lib/csr-utils";
 import { Center, Spinner } from "@chakra-ui/react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
