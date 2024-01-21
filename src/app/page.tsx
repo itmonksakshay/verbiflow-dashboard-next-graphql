@@ -16,7 +16,6 @@ export default async function Page() {
   const offsetValue = nextCookies.get("timezoneOffset")!.value;
   const client = getApolloClient();
   const today = adjustDateForTimezone(new Date(), Number(offsetValue));
-  // console.log(today.toISOString());
   let weekAgo = new Date(today);
   let yesterday = new Date(today);
   weekAgo.setDate(yesterday.getDate() - 7);
@@ -59,7 +58,6 @@ export default async function Page() {
       },
     ],
   };
-  // console.log(uniqueVisitorsChartData);
   const uniqueCountries: Record<string, any> = {};
   const { getEventByCountryCity } = await getCountryCityStats({
     client,

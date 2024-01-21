@@ -81,7 +81,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   return (
     <Center w={"100%"} h={"100%"} overflow={"auto"}>
-      <VStack w={"100%"}>
+      <VStack w={"100%"} h={"100%"}>
         <Text fontWeight={900} fontSize={20} py={"min(1.5vh,37.5px)"}>
           {getEventSchema.eventName}
         </Text>
