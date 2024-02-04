@@ -78,7 +78,7 @@ const TagListModal = ({ isOpen, onClose, metadataId, metadataName }) => {
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{metadataName}</ModalHeader>
+        <ModalHeader>{`${metadataName} Filters`}</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <Input
