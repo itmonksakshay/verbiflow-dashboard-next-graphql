@@ -14,7 +14,7 @@ const MetadataFilterTag: React.FC<{name: string; metadataId: number}> = ({name, 
   return (
     <>
       <Tag size="lg"  variant="solid" colorScheme="blue" onClick={onOpen}>
-        <TagLabel>{`${name} (${count})`}</TagLabel>
+        <TagLabel>{`${name} Filter (${count})`}</TagLabel>
       </Tag>
       <TagListModal isOpen={isOpen} onClose={onClose} metadataId={metadataId} metadataName={name} />
     </>

@@ -1,7 +1,7 @@
 "use client";
-import React, { useState } from 'react';
+import React from 'react';
 import dynamic from 'next/dynamic';
-import {  Grid, Box, VStack, Stack } from '@chakra-ui/react';
+import {  Grid, Box, Stack } from '@chakra-ui/react';
 import GroupByDropdown from './filters/GroupByDropdown';
 import MetadataFilterDropdown from './filters/MetadataFilterDropdown';
 import { FilterProvider } from './filters/context/FilterContext';
