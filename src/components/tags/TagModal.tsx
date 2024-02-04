@@ -5,15 +5,15 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  HStack, 
-  IconButton, 
+  HStack,
+  IconButton,
   ModalHeader,
   ModalBody,
   ModalCloseButton,
   VStack,
   Input,
-  Box, 
-  Text, 
+  Box,
+  Text,
   useTheme
 } from '@chakra-ui/react';
 import { DeleteIcon } from '@chakra-ui/icons';
@@ -21,7 +21,14 @@ import { isEqual } from 'lodash';
 
 
 
-const FilterTagRow = ({ filter, onRemove }) => {
+const FilterTagRow = ({ filter, onRemove }: {
+  filter: {
+    propertyValue: string,
+    operator: string,
+    valueToCompare: string
+  },
+  onRemove: () => void
+}) => {
   const theme = useTheme();
 
   return (
@@ -36,7 +43,7 @@ const FilterTagRow = ({ filter, onRemove }) => {
       bg={theme.colors.gray[100]}
     >
       <HStack spacing={4}>
-        <Text fontSize="sm" color="black" textAlign="center">{filter.propertyValue.replace("of","")}</Text>
+        <Text fontSize="sm" color="black" textAlign="center">{filter.propertyValue.replace("of", "")}</Text>
         <Text fontSize="sm" color="red" textAlign="center">{filter.operator}</Text>
         <Box bg={theme.colors.green[100]} px={2} borderRadius="md">
           <Text fontSize="sm" color="black" textAlign="center">{filter.valueToCompare}</Text>
@@ -57,17 +64,17 @@ const FilterTagRow = ({ filter, onRemove }) => {
 const TagListModal = ({ isOpen, onClose, metadataId, metadataName, eventSchemaId }) => {
   const [search, setSearch] = useState('');
   const { filters, removeFilter } = useFilters();
-  const tags = filters.metadataFilter.filter(metadataFilter => { 
+  const tags = filters.metadataFilter.filter(metadataFilter => {
     return metadataFilter.metadataId === metadataId
-  }); 
+  });
 
   // Filter tags based on search input
-  const filteredTags = tags.filter((tag) => { 
-    let tagName =  `${tag.propertyValue.replace(" of","")} ${tag.operator} ${tag.valueToCompare}`.toLowerCase();
-    const searchSplit = search.toLowerCase().split(" ") 
-    const hasNonExistingWord = searchSplit.some(searchTerm =>{ 
-      const hasTerm =  !tagName.includes(searchTerm);
-      tagName = tagName.replace(searchTerm,"")
+  const filteredTags = tags.filter((tag) => {
+    let tagName = `${tag.propertyValue.replace(" of", "")} ${tag.operator} ${tag.valueToCompare}`.toLowerCase();
+    const searchSplit = search.toLowerCase().split(" ")
+    const hasNonExistingWord = searchSplit.some(searchTerm => {
+      const hasTerm = !tagName.includes(searchTerm);
+      tagName = tagName.replace(searchTerm, "")
       return hasTerm;
     })
     return !hasNonExistingWord;
@@ -84,7 +91,7 @@ const TagListModal = ({ isOpen, onClose, metadataId, metadataName, eventSchemaId
           <Input
             placeholder="Filter search"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e: any) => setSearch(e.target.value)}
             mb={4}
           />
           <VStack align="stretch" spacing={2}>

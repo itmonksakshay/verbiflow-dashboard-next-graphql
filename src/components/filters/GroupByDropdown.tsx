@@ -10,11 +10,11 @@ import GroupBy from './GroupBy';
 const GroupByDropdown = ({menuText, eventSchemaId}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const handleClick = (e) => e.stopPropagation();
+  const handleClick = (e: any) => e.stopPropagation();
 
   return (
     <Menu isOpen={isOpen} onClose={onClose}>
-      <MenuButton as={Button} onClick={onOpen} 
+      <MenuButton as={Button} onClick={onOpen}
         size="sm"
         width="120px" // Adjust width as needed
         height="30px" // Match the height of the date input

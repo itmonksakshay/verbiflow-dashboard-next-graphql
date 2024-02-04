@@ -7,11 +7,6 @@ export function computeMetadataLogic(metadatasAvailable, metadataValue, property
       const propertyOptions = selectedMetadata.metadataType === 'STRING' ? initialPropertyOptions : ['Value of'];
       const hideProperty = propertyOptions.length < 2;
 
-      
-      // Adjust operator options based on the metadata type and property value
-      const operatorOptions = propertyValue === 'Length of' || selectedMetadata.type === 'NUMBER'
-        ? initialOperatorOptions
-        : ['='];
 
       return { propertyOptions, operatorOptions, hideProperty };
     } else {
@@ -23,4 +18,5 @@ export function computeMetadataLogic(metadatasAvailable, metadataValue, property
       };
     }
   }
-  
+}
+

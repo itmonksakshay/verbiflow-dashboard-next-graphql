@@ -1,17 +1,26 @@
-import React, { useState, useEffect} from 'react';
-import { Flex,Box } from '@chakra-ui/react';
+import React, { useState, useEffect, SetStateAction } from 'react';
+import { Flex, Box } from '@chakra-ui/react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { css } from '@emotion/react';
 
 
-const VerbiflowDatePicker = ({ isLeft, isOpen, setIsOpen, setDateToRender, dateToRender, startDate, isStartDate, endDate}) => {
+const VerbiflowDatePicker = ({ isLeft, isOpen, setIsOpen, setDateToRender, dateToRender, startDate, isStartDate, endDate }: {
+  isLeft: boolean,
+  isOpen: boolean,
+  setIsOpen: React.Dispatch<SetStateAction<boolean>>,
+  setDateToRender: React.Dispatch<SetStateAction<Date>>,
+  dateToRender: Date,
+  startDate: Date,
+  isStartDate: boolean,
+  endDate: Date
+}) => {
   const today = new Date();
 
   console.log("minDate", startDate, "maxDate", today)
   // Close the picker if clicked outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: any) => {
       if (!event.target.closest('.react-datepicker-wrapper') && !event.target.closest('.react-datepicker')) {
         setIsOpen(false);
       }
@@ -24,13 +33,13 @@ const VerbiflowDatePicker = ({ isLeft, isOpen, setIsOpen, setDateToRender, dateT
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [isOpen,setIsOpen]);
+  }, [isOpen, setIsOpen]);
 
   return (
     <Flex direction="column" position="relative" >
       {isOpen && (
 
-        <Box position="absolute" top="100%" zIndex="10" right={isLeft ? '0' : '-150px'}  marginTop={"5px"} css={css`
+        <Box position="absolute" top="100%" zIndex="10" right={isLeft ? '0' : '-150px'} marginTop={"5px"} css={css`
         .react-datepicker {
           font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
           background-color: #2d3748;
@@ -64,15 +73,17 @@ const VerbiflowDatePicker = ({ isLeft, isOpen, setIsOpen, setDateToRender, dateT
         }
         `}>
           <DatePicker
-            minDate={isStartDate ?  null: startDate}
-            maxDate={isStartDate? endDate : today}
+            minDate={isStartDate ? null : startDate}
+            maxDate={isStartDate ? endDate : today}
             selected={dateToRender}
             onChange={(date) => {
-              setDateToRender(date);
+              if (date) {
+                setDateToRender(date);
+              }
               setIsOpen(false);
             }}
-
-            max
+            // I added here max time, please check
+            maxTime={today}
             inline
           />
         </Box>

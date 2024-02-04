@@ -1,13 +1,17 @@
-import React, { useState } from 'react';
+import React, { SetStateAction, useState } from 'react';
 import {
   FormControl,
   FormLabel,
   Input,
 } from '@chakra-ui/react';
 
-const FilterInput = ({ label, value, setValue }) => {
+const FilterInput = ({ label, value, setValue }: {
+  label: string,
+  value: string,
+  setValue: React.Dispatch<SetStateAction<string>>
+}) => {
 
-  const handleChange = (event) => {
+  const handleChange = (event: any) => {
     // Extract the value from the event object
     setValue(event.target.value);
     // Close the menu here if needed or manage the state to close it

@@ -1,53 +1,56 @@
-import React, { useState,useEffect,useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Button } from '@chakra-ui/react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { MdDateRange } from 'react-icons/md';
 import { css } from '@emotion/react';
 
-const DateFilter = ({ onApply }) => {
+const DateFilter = ({ onApply }: {
+  onApply: (start: string, end: string) => void
+}) => {
   const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(null);
+  const [endDate, setEndDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [calanderKey, setCalanderKey] = useState(0);
   const wrapperRef = useRef(null); // Ref for the wrapper to detect clicks outside
   const [viewingMonth, setViewingMonth] = useState(new Date().getMonth());
 
 
-  const formatDate = (date) => {
+  const formatDate = (date: Date) => {
     return date ? date.toLocaleDateString() : '';
   };
 
   // Function to handle date change
-  const handleDateChange = ([start, end]) => {
+  const handleDateChange = ([start, end]: any) => {
     setStartDate(start);
     setEndDate(end);
     if (start && end) {
       onApply(formatDate(start), formatDate(end));
     }
-    
+
   };
 
-  const handleMonthChange = (date) => {
+  const handleMonthChange = (date: Date) => {
     setViewingMonth(date.getMonth());
   };
 
-  const renderDayContents = (day, date) => {
-    const handleClick = (e) => {
-      // Prevent navigation if the day is not in the viewing month
-      if (date.getMonth() !== viewingMonth) {
-        e.stopPropagation();
-      } else {
-        setStartDate(date); // Set the date as usual
-      }
-    };
+  // There are no uses of this function
+  // const renderDayContents = (day, date) => {
+  //   const handleClick = (e) => {
+  //     // Prevent navigation if the day is not in the viewing month
+  //     if (date.getMonth() !== viewingMonth) {
+  //       e.stopPropagation();
+  //     } else {
+  //       setStartDate(date); // Set the date as usual
+  //     }
+  //   };
 
-    return <div onClick={handleClick}>{day}</div>;
-  };
-  
+  //   return <div onClick={handleClick}>{day}</div>;
+  // };
+
   useEffect(() => {
     // Function to detect click outside
-    const handleClickOutside = (event) => {
+    const handleClickOutside = (event: any) => {
       // Assume date picker portal ID or class here to check if the click is inside the date picker
       const datePickerElement = document.querySelector('.react-datepicker');
       const clickedInsideDatePicker = datePickerElement && datePickerElement.contains(event.target);
@@ -121,7 +124,7 @@ const DateFilter = ({ onApply }) => {
             startDate={startDate}
             endDate={endDate}
             onChange={handleDateChange}
-            onCalanderClose={() => console.log("hello")}
+            // onCalanderClose={() => console.log("hello")}
             onMonthChange={handleMonthChange}
             inline
             disabledKeyboardNavigation

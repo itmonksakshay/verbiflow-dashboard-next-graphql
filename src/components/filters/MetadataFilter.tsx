@@ -60,13 +60,13 @@ const MetadataFilterForm = ({eventSchemaId}) => {
       initialPropertyOptions
     );
 
-    if(!propertyOptions.includes(propertyValue)){ 
-      setPropertyValue("Value of"); 
+    if (!propertyOptions.includes(propertyValue)) {
+      setPropertyValue("Value of");
       setValueToCompare("");
-    } 
+    }
 
-    if(!operatorOptions.includes(operator)){ 
-      setOperator(""); 
+    if (!operatorOptions.includes(operator)) {
+      setOperator("");
       setValueToCompare("");
     }
 
@@ -161,7 +161,7 @@ const MetadataFilterForm = ({eventSchemaId}) => {
         <FilterInputDropdown
           value={propertyValue}
           setValue={setPropertyValue}
-          isHidden={ hideProperty }
+          isHidden={hideProperty}
           label="Property"
           options={propertyOptions}
         />
@@ -178,10 +178,10 @@ const MetadataFilterForm = ({eventSchemaId}) => {
           options={operatorOptions}
         />
         <FilterInput
-           value={valueToCompare}
-           setValue={setValueToCompare}
-           label="Value"
-          />
+          value={valueToCompare}
+          setValue={setValueToCompare}
+          label="Value"
+        />
       </Box>
       <Button
         _placeholder={{ color: 'gray.300' }}

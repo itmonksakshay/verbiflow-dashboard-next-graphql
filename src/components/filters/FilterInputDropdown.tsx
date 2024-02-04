@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { SetStateAction, useState } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -12,9 +12,17 @@ import {
 } from '@chakra-ui/react';
 
 
-const FilterInputDropdown = ({ label, options, value, setValue, isHidden=false }) => {
+const FilterInputDropdown = ({ label, options, value, setValue, isHidden = false }: {
+  label: string,
+  value: string,
+  isHidden?: boolean,
+  // setValue: React.Dispatch<SetStateAction<string>>,
+  setValue: any,
+  options: Array<string>
 
-  const handleChange = (option) => {
+}) => {
+
+  const handleChange = (option: string) => {
     console.log("setting value", option)
     setValue(option);
     // Close the menu here if needed or manage the state to close it
@@ -39,7 +47,7 @@ const FilterInputDropdown = ({ label, options, value, setValue, isHidden=false }
         </MenuButton>
         <MenuList>
           {options.map((option) => (
-            <MenuItem key={option} onClick={() => handleChange(option)}  _focus={{background: undefined}}  backgroundColor={value === option ? 'gray.600': undefined}>
+            <MenuItem key={option} onClick={() => handleChange(option)} _focus={{ background: undefined }} backgroundColor={value === option ? 'gray.600' : undefined}>
               {option}
             </MenuItem>
           ))}

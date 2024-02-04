@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { SetStateAction, createContext, useContext, useState } from 'react';
 import { isEqual } from 'lodash';
 import { getGroupByGraph, getMetadataFilterGraph, groupByInternal, metadataFilterInternal } from './utils';
 import { getEventByFilter,EventCount } from '@/lib/gqls';
@@ -25,12 +25,12 @@ export const FilterProvider = ({ children }) => {
   const addVariantFilter = async (newFilter, eventSchemaId) => {
     // Here you would include logic to update the state with the new filter
     // This is a simplified example
-    const filterExists = filters.variantFilters.some((filter) => { 
-       return isEqual(filter,newFilter)
+    const filterExists = filters.variantFilters.some((filter) => {
+      return isEqual(filter, newFilter)
     })
-    
-    if(filterExists){ 
-        return false;
+
+    if (filterExists) {
+      return false;
     }
 
     setFilters((currentFilters) => ({
@@ -60,12 +60,12 @@ export const FilterProvider = ({ children }) => {
   const addGroupByFilter = async(newFilter: groupByInternal, eventSchemaId: number) => {
     // Here you would include logic to update the state with the new filter
     // This is a simplified example
-    const filterExists = filters.groupBy.some((filter) => { 
-       return isEqual(filter,newFilter)
+    const filterExists = filters.groupBy.some((filter) => {
+      return isEqual(filter, newFilter)
     })
-    
-    if(filterExists){ 
-        return false;
+
+    if (filterExists) {
+      return false;
     }
     setFilters((currentFilters) => ({
       ...currentFilters,
@@ -96,11 +96,11 @@ export const FilterProvider = ({ children }) => {
   const addMetadataFilter = async(newFilter: metadataFilterInternal, eventSchemaId: number) => {
     // Here you would include logic to update the state with the new filter
     // This is a simplified example
-    const filterExists = filters.metadataFilter.some((filter) => { 
-       return isEqual(filter,newFilter)
+    const filterExists = filters.metadataFilter.some((filter) => {
+      return isEqual(filter, newFilter)
     })
-    if(filterExists){ 
-        return false;
+    if (filterExists) {
+      return false;
     }
     setFilters((currentFilters) => ({
       ...currentFilters,

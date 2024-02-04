@@ -15,7 +15,7 @@ const MetadataFilterDropdown = ({menuText, eventSchemaId}) => {
 
   return (
     <Menu isOpen={isOpen} onClose={onClose}>
-      <MenuButton as={Button} onClick={onOpen} 
+      <MenuButton as={Button} onClick={onOpen}
         size="sm"
         width="120px" // Adjust width as needed
         height="30px" // Match the height of the date input
