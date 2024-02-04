@@ -26,7 +26,7 @@ export default function Navbar() {
           size={"lg"}
           px={6}
           bg={isActive("/") ? "btn.grad" : undefined}
-          color={isActive("/") ? "purple.600" : undefined}
+          color={isActive("/") ? "purple.600" : "white"}
           colorScheme={isActive("/") ? undefined : "grey"}
           _hover={
             isActive("/") ? { bg: "btn.grad_hover" } : { color: "gray.300" }
@@ -43,7 +43,7 @@ export default function Navbar() {
           size={"lg"}
           px={6}
           bg={isActive("/events") ? "btn.grad" : undefined}
-          color={isActive("/events") ? "purple.600" : undefined}
+          color={isActive("/events") ? "purple.600" : "white"}
           colorScheme={isActive("/events") ? undefined : "grey"}
           _hover={
             isActive("/events")

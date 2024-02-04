@@ -17,9 +17,16 @@ import {
   Thead,
   Tr,
   VStack,
+  Flex
 } from "@chakra-ui/react";
 import { cookies } from "next/headers";
+import React from 'react';
+import dynamic from 'next/dynamic';
+
+const FilterTagComponent = dynamic(() => import("@/components/FilterTagComponent"), { ssr: false });
+
 export default async function Page({ params }: { params: { id: string } }) {
+
   const nextCookies = cookies();
   const offsetValue = nextCookies.get("timezoneOffset")!.value;
   const client = getApolloClient();
@@ -35,6 +42,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     cached: false,
     timezoneOffset: offsetValue,
   });
+  
   const today = adjustDateForTimezone(new Date(), Number(offsetValue));
   const datesForLastDays: string[] = [];
   const DAYS = 7;
@@ -80,61 +88,69 @@ export default async function Page({ params }: { params: { id: string } }) {
   };
 
   return (
-    <Center w={"100%"} h={"100%"} overflow={"auto"}>
-      <VStack w={"100%"} h={"100%"}>
-        <Text fontWeight={900} fontSize={20} py={"min(1.5vh,37.5px)"}>
+    <VStack w={"100%"} h={"100%"} overflow={"auto"}>
+      <Text fontWeight={900} fontSize={20} py={"min(1.5vh,37.5px)"}>
           {getEventSchema.eventName}
-        </Text>
-        <HStack
-          h={"100%"}
-          w={"100%"}
-          wrap={"wrap"}
-          align={"flex-start"}
-          justifyContent={"space-around"}
-          px={8}
-        >
-          <Box height={"661px"} width={"600px"}>
-            <AppChartChart data={chartData} y_title="Events" h="100%" />
-          </Box>
-          <VStack gap={3} justifyContent={"flex-start"} alignItems={"center"}>
-            <Box width={"390px"} height={"100%"} maxHeight={"400px"}>
-              <BrowserMockup imageUrl="/assets/mockup.png" />
+      </Text>
+       {/* Align FilterTagComponent to the left */}
+      <Flex w={"100%"} justifyContent={"flex-start"} px={8}>
+        <FilterTagComponent />
+      </Flex>
+
+      <Center w={"100%"} h={"100%"} overflow={"auto"}>
+        <VStack w={"100%"} h={"100%"}>
+          
+          <HStack
+            h={"100%"}
+            w={"100%"}
+            wrap={"wrap"}
+            align={"flex-start"}
+            justifyContent={"space-around"}
+            px={8}
+          >
+            <Box height={"661px"} width={"600px"}>
+              <AppChartChart data={chartData} y_title="Events" h="100%" />
             </Box>
-            <AppEventCard width="400px">
-              <VStack align={"center"} width={"100%"} height={"100%"}>
-                <Text fontWeight={900} fontSize={20}>
-                  Metadata Comparison
-                </Text>
-                <TableContainer whiteSpace={"wrap"}>
-                  <Table variant="simple">
-                    <Thead>
-                      <Tr>
-                        <Th color={"purple.500"}>Name</Th>
-                        <Th color={"purple.500"}>Attribute</Th>
-                        <Th color={"purple.500"} isNumeric>
-                          Value
-                        </Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      <Tr>
-                        <Td>metadata name</Td>
-                        <Td>Average length IF STRING</Td>
-                        <Td isNumeric>25.4</Td>
-                      </Tr>
-                      <Tr>
-                        <Td>metadata 2 name</Td>
-                        <Td>Mean IF NUMBER</Td>
-                        <Td isNumeric>30.48</Td>
-                      </Tr>
-                    </Tbody>
-                  </Table>
-                </TableContainer>
-              </VStack>
-            </AppEventCard>
-          </VStack>
-        </HStack>
-      </VStack>
-    </Center>
+            <VStack gap={3} justifyContent={"flex-start"} alignItems={"center"}>
+              <Box width={"390px"} height={"100%"} maxHeight={"400px"}>
+                <BrowserMockup imageUrl="/assets/mockup.png" />
+              </Box>
+              <AppEventCard width="400px">
+                <VStack align={"center"} width={"100%"} height={"100%"}>
+                  <Text fontWeight={900} fontSize={20}>
+                    Metadata Comparison
+                  </Text>
+                  <TableContainer whiteSpace={"wrap"}>
+                    <Table variant="simple">
+                      <Thead>
+                        <Tr>
+                          <Th color={"purple.500"}>Name</Th>
+                          <Th color={"purple.500"}>Attribute</Th>
+                          <Th color={"purple.500"} isNumeric>
+                            Value
+                          </Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        <Tr>
+                          <Td>metadata name</Td>
+                          <Td>Average length IF STRING</Td>
+                          <Td isNumeric>25.4</Td>
+                        </Tr>
+                        <Tr>
+                          <Td>metadata 2 name</Td>
+                          <Td>Mean IF NUMBER</Td>
+                          <Td isNumeric>30.48</Td>
+                        </Tr>
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
+                </VStack>
+              </AppEventCard>
+            </VStack>
+          </HStack>
+        </VStack>
+      </Center>
+    </VStack>
   );
 }
