@@ -108,4 +108,4 @@ const VariantFilter = ({menuText,eventSchemaId}) => {
   );
 };
 
-export default VariantFilter;
+export default VariantFilterForm;

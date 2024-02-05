@@ -5,7 +5,7 @@ import {
   VStack,
   useToast
 } from '@chakra-ui/react';
-import FilterInputDropdown from './FilterInputDropdown';
+import FilterInputDropdown from '../forms/formElements/FilterInputDropdown';
 import { useFilters } from './context/FilterContext';
 import { useEventSchema } from '../hooks/useEventSchema';
 import { MetadataType } from '@/lib/gqls';

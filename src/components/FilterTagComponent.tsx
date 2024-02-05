@@ -18,7 +18,7 @@ const TagsDisplay = dynamic(() => import('./tags/Tag'), {
   ssr: false,
 });
 
-const VariantFilter = dynamic(() => import( './filters/VariantFilter'), {
+const VariantFilter = dynamic(() => import( './forms/formElements/VariantFilterForm'), {
   ssr: false,
 });
 

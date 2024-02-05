@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { InputGroup, InputLeftElement, Input, Flex, Icon, Box } from '@chakra-ui/react';
 import { MdDateRange } from 'react-icons/md';
-import VerbiflowDatePicker from './VerbiflowDatePicker';
+import VerbiflowDatePicker from '../forms/formElements/VerbiflowDatePicker';
 import 'react-datepicker/dist/react-datepicker.css';
 
 const DateRangePicker = () => {

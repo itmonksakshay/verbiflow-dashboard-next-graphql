@@ -1,15 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Menu,
   MenuButton,
   MenuList,
   Button,
   useDisclosure,
-} from '@chakra-ui/react';
-import GroupBy from './GroupBy';
-const GroupByDropdown = ({menuText, eventSchemaId}) => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+} from "@chakra-ui/react";
+import MetadataFilterForm from "../../forms/MetadataFilterForm";
 
+const MetadataFilterDropdown = ({menuText, eventSchemaId}) => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  
   const handleClick: React.MouseEventHandler<HTMLDivElement> = (e) => e.stopPropagation();
 
   return (
@@ -32,10 +33,10 @@ const GroupByDropdown = ({menuText, eventSchemaId}) => {
         {menuText}
       </MenuButton>
       <MenuList px={4} onClick={handleClick} >
-        <GroupBy eventSchemaId={eventSchemaId}/>
+        <MetadataFilterForm eventSchemaId={eventSchemaId}/>
       </MenuList>
     </Menu>
   );
 };
 
-export default GroupByDropdown;
+export default MetadataFilterMenu;

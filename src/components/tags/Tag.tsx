@@ -1,20 +1,28 @@
-
 "use client";
-import React from 'react';
-import { Tag, TagLabel, TagCloseButton, Wrap, WrapItem, GridItem, Grid, Text} from '@chakra-ui/react';
-import { useFilters } from '../filters/context/FilterContext';
-import MetadataFilterTag from './MetadataFilterTag';
-
+import React from "react";
+import {
+  Tag,
+  TagLabel,
+  TagCloseButton,
+  Wrap,
+  WrapItem,
+  GridItem,
+  Grid,
+  Text,
+} from "@chakra-ui/react";
+import { useFilters } from "../filters/context/FilterContext";
+import MetadataFilterTag from "./MetadataFilterTag";
 
 const TagsDisplay: React.FC<{}> = ({eventSchemaId}) => {
   const { filters, removeFilter } = useFilters();
-  
-  const uniqueMetadataIds = new Set(filters.metadataFilter.map(filter => filter.metadataId));
-  
-  const uniqueMetadataFilters = filters.metadataFilter.filter((filter, index, self) => 
-    index === self.findIndex((t) => (
-      t.metadataId === filter.metadataId
-    ))
+
+  const uniqueMetadataIds = new Set(
+    filters.metadataFilter.map((filter) => filter.metadataId)
+  );
+
+  const uniqueMetadataFilters = filters.metadataFilter.filter(
+    (filter, index, self) =>
+      index === self.findIndex((t) => t.metadataId === filter.metadataId)
   );
 
   /* 
@@ -26,9 +34,17 @@ const TagsDisplay: React.FC<{}> = ({eventSchemaId}) => {
   return (
     <Grid templateColumns="repeat(3, 1fr)" gap={4}>
       <GridItem>
-        <Text mb={2} fontSize="sm" fontWeight="bold" color="gray.500" hidden={uniqueMetadataFilters.length === 0 }>Metadata Filters</Text>
+        <Text
+          mb={2}
+          fontSize="sm"
+          fontWeight="bold"
+          color="gray.500"
+          hidden={uniqueMetadataFilters.length === 0}
+        >
+          Metadata Filters
+        </Text>
         <Wrap>
-          { uniqueMetadataFilters.map((filter, index) => (
+          {uniqueMetadataFilters.map((filter, index) => (
             <WrapItem key={index}>
               <MetadataFilterTag name={filter.metadataName} metadataId={filter.metadataId} eventSchemaId={eventSchemaId}></MetadataFilterTag>
             </WrapItem>
@@ -36,11 +52,25 @@ const TagsDisplay: React.FC<{}> = ({eventSchemaId}) => {
         </Wrap>
       </GridItem>
       <GridItem>
-        <Text mb={2} fontSize="sm" fontWeight="bold" color="gray.500" hidden={filters.variantFilters.length === 0 }>Variant Filters</Text>
+        <Text
+          mb={2}
+          fontSize="sm"
+          fontWeight="bold"
+          color="gray.500"
+          hidden={filters.variantFilters.length === 0}
+        >
+          Variant Filters
+        </Text>
         <Wrap>
-        {filters.variantFilters.map((filter, index) => (
+          {filters.variantFilters.map((filter, index) => (
             <WrapItem key={index}>
-              <Tag size="md" borderRadius="full" variant="solid" colorScheme="orange" m="1">
+              <Tag
+                size="md"
+                borderRadius="full"
+                variant="solid"
+                colorScheme="orange"
+                m="1"
+              >
                 <TagLabel>{`${filter.variantName}`}</TagLabel>
                 <TagCloseButton onClick={() => removeFilter("variantFilters",index,eventSchemaId)} />
               </Tag>
@@ -66,4 +96,4 @@ const TagsDisplay: React.FC<{}> = ({eventSchemaId}) => {
   );
 };
 
-export default /* use client */  TagsDisplay;
+export default /* use client */ TagsDisplay;

@@ -18,7 +18,7 @@ export const FilterProvider = ({ children }) => {
   >({
     variantFilters: [],
     metadataFilter: [],
-    groupBy: []
+    groupBy: [],
   });
   const [dataToRender, setDataToRender] = useState<EventCount[]>([]);
 
@@ -26,8 +26,8 @@ export const FilterProvider = ({ children }) => {
     // Here you would include logic to update the state with the new filter
     // This is a simplified example
     const filterExists = filters.variantFilters.some((filter) => {
-      return isEqual(filter, newFilter)
-    })
+      return isEqual(filter, newFilter);
+    });
 
     if (filterExists) {
       return false;
@@ -35,7 +35,7 @@ export const FilterProvider = ({ children }) => {
 
     setFilters((currentFilters) => ({
       ...currentFilters,
-      variantFilters: [...currentFilters.variantFilters, newFilter]
+      variantFilters: [...currentFilters.variantFilters, newFilter],
     }));
 
     const metadataFilterToGraph = filters.metadataFilter.map(filter => getMetadataFilterGraph(filter) ); 
@@ -61,15 +61,15 @@ export const FilterProvider = ({ children }) => {
     // Here you would include logic to update the state with the new filter
     // This is a simplified example
     const filterExists = filters.groupBy.some((filter) => {
-      return isEqual(filter, newFilter)
-    })
+      return isEqual(filter, newFilter);
+    });
 
     if (filterExists) {
       return false;
     }
     setFilters((currentFilters) => ({
       ...currentFilters,
-      groupBy: [...currentFilters.groupBy, newFilter]
+      groupBy: [...currentFilters.groupBy, newFilter],
     }));
 
     const metadataFilterToGraph = filters.metadataFilter.map(filter => getMetadataFilterGraph(filter) ); 
@@ -91,20 +91,19 @@ export const FilterProvider = ({ children }) => {
     return true;
   };
 
-
   // Function to add a new filter
   const addMetadataFilter = async(newFilter: metadataFilterInternal, eventSchemaId: number) => {
     // Here you would include logic to update the state with the new filter
     // This is a simplified example
     const filterExists = filters.metadataFilter.some((filter) => {
-      return isEqual(filter, newFilter)
-    })
+      return isEqual(filter, newFilter);
+    });
     if (filterExists) {
       return false;
     }
     setFilters((currentFilters) => ({
       ...currentFilters,
-      metadataFilter: [...currentFilters.metadataFilter, newFilter]
+      metadataFilter: [...currentFilters.metadataFilter, newFilter],
     }));
 
     const metadataFilterToGraph = [...filters.metadataFilter, newFilter].map(filter => getMetadataFilterGraph(filter) ); 

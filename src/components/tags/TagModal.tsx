@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useFilters } from '../filters/context/FilterContext';
+import React, { ChangeEvent, useState } from "react";
+import { useFilters } from "../filters/context/FilterContext";
 
 import {
   Modal,
@@ -14,20 +14,21 @@ import {
   Input,
   Box,
   Text,
-  useTheme
-} from '@chakra-ui/react';
-import { DeleteIcon } from '@chakra-ui/icons';
-import { isEqual } from 'lodash';
+  useTheme,
+} from "@chakra-ui/react";
+import { DeleteIcon } from "@chakra-ui/icons";
+import { isEqual } from "lodash";
 
-
-
-const FilterTagRow = ({ filter, onRemove }: {
+const FilterTagRow = ({
+  filter,
+  onRemove,
+}: {
   filter: {
-    propertyValue: string,
-    operator: string,
-    valueToCompare: string
-  },
-  onRemove: () => void
+    propertyValue?: string;
+    operator?: string;
+    valueToCompare?: string;
+  };
+  onRemove: () => void;
 }) => {
   const theme = useTheme();
 
@@ -43,10 +44,16 @@ const FilterTagRow = ({ filter, onRemove }: {
       bg={theme.colors.gray[100]}
     >
       <HStack spacing={4}>
-        <Text fontSize="sm" color="black" textAlign="center">{filter.propertyValue.replace("of", "")}</Text>
-        <Text fontSize="sm" color="red" textAlign="center">{filter.operator}</Text>
+        <Text fontSize="sm" color="black" textAlign="center">
+          {filter?.propertyValue?.replace("of", "")}
+        </Text>
+        <Text fontSize="sm" color="red" textAlign="center">
+          {filter.operator}
+        </Text>
         <Box bg={theme.colors.green[100]} px={2} borderRadius="md">
-          <Text fontSize="sm" color="black" textAlign="center">{filter.valueToCompare}</Text>
+          <Text fontSize="sm" color="black" textAlign="center">
+            {filter.valueToCompare}
+          </Text>
         </Box>
       </HStack>
       <IconButton
@@ -64,22 +71,23 @@ const FilterTagRow = ({ filter, onRemove }: {
 const TagListModal = ({ isOpen, onClose, metadataId, metadataName, eventSchemaId }) => {
   const [search, setSearch] = useState('');
   const { filters, removeFilter } = useFilters();
-  const tags = filters.metadataFilter.filter(metadataFilter => {
-    return metadataFilter.metadataId === metadataId
+  const tags = filters.metadataFilter.filter((metadataFilter) => {
+    return metadataFilter.metadataId === metadataId;
   });
 
   // Filter tags based on search input
   const filteredTags = tags.filter((tag) => {
-    let tagName = `${tag.propertyValue.replace(" of", "")} ${tag.operator} ${tag.valueToCompare}`.toLowerCase();
-    const searchSplit = search.toLowerCase().split(" ")
-    const hasNonExistingWord = searchSplit.some(searchTerm => {
+    let tagName = `${tag.propertyValue.replace(" of", "")} ${tag.operator} ${
+      tag.valueToCompare
+    }`.toLowerCase();
+    const searchSplit = search.toLowerCase().split(" ");
+    const hasNonExistingWord = searchSplit.some((searchTerm) => {
       const hasTerm = !tagName.includes(searchTerm);
-      tagName = tagName.replace(searchTerm, "")
+      tagName = tagName.replace(searchTerm, "");
       return hasTerm;
-    })
+    });
     return !hasNonExistingWord;
   });
-
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -91,7 +99,9 @@ const TagListModal = ({ isOpen, onClose, metadataId, metadataName, eventSchemaId
           <Input
             placeholder="Filter search"
             value={search}
-            onChange={(e: any) => setSearch(e.target.value)}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setSearch(e.target.value)
+            }
             mb={4}
           />
           <VStack align="stretch" spacing={2}>
@@ -104,7 +114,7 @@ const TagListModal = ({ isOpen, onClose, metadataId, metadataName, eventSchemaId
                     if(isEqual(filterToCompare, filter)){ 
                       removeFilter("metadataFilter",filterToCompareIndex,eventSchemaId)
                     }
-                  })
+                  );
                 }}
               />
             ))}
