@@ -8,10 +8,10 @@ import {
 } from '@chakra-ui/react';
 import MetadataFilterForm from './MetadataFilter';
 
-const MetadataFilterDropdown = ({menuText}) => {
+const MetadataFilterDropdown = ({menuText, eventSchemaId}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   
-  const handleClick = (e) => e.stopPropagation();
+  const handleClick: React.MouseEventHandler<HTMLDivElement> = (e) => e.stopPropagation();
 
   return (
     <Menu isOpen={isOpen} onClose={onClose}>
@@ -31,7 +31,7 @@ const MetadataFilterDropdown = ({menuText}) => {
         {menuText}
       </MenuButton>
       <MenuList px={4} onClick={handleClick} >
-        <MetadataFilterForm/>
+        <MetadataFilterForm eventSchemaId={eventSchemaId}/>
       </MenuList>
     </Menu>
   );

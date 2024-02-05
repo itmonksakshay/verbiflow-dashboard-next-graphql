@@ -202,9 +202,132 @@ export const getEventCountById = async ({
 
   return data as IEventCount;
 };
-interface IEventName {
-  getEventSchema: { eventName: string };
+
+export enum operator {
+  EQUALS="EQUALS",
+  GREATER_THAN="GREATER_THAN",
+  LESS_THAN="LESS_THAN",
+  GREATER_THAN_OR_EQUAL="GREATER_THAN_OR_EQUAL",
+  LESS_THAN_OR_EQUAL="LESS_THAN_OR_EQUAL"
 }
+
+export enum MetadataPropertyOperations { 
+  VALUE="VALUE",
+  LENGTH="LENGTH", 
+  STARTS_WITH="STARTS_WITH",
+  ENDS_WITH="ENDS_WITH"
+}
+
+export type MetadataOperator = { 
+  metadataSchemaId: number;
+  operation: MetadataPropertyOperations;
+}
+
+export type MetadataFilter = { 
+  metadataOperator: MetadataOperator;
+  value: String;
+  operator: operator;
+} 
+
+export enum MetadataType {
+  STRING,
+  NUMBER,
+  BOOLEAN,
+  COLOR
+}
+
+
+export type EventDataFilter = { 
+  variantFilter: number[] 
+  metadataFilter: MetadataFilter[] 
+}
+
+export interface IEventSchema {
+  getEventSchema: { 
+    eventName: string; 
+    eventSchemaId: number; 
+    eventMetadata: {
+				metadataId: number; 
+				metadataName: string
+				metadataType: MetadataType
+			}[]
+  };
+}
+
+export type EventCount = { 
+  data: { 
+    countValue: number; 
+    eventMetadatas: {
+      metadataSchemaId: number; 
+      value: String; 
+    }[], 
+    variantId: number; 
+  }; 
+  date: string; 
+  index: number;
+}
+
+export const getEventByFilter = async ({ 
+  eventSchemaId,
+  metadataFilter, 
+  client,
+  variantFilter, 
+  timezoneOffset
+}: { 
+  client: ApolloClient<NormalizedCacheObject>;
+  eventSchemaId: number;
+  metadataFilter: MetadataFilter[];
+  variantFilter:  number[]; 
+  timezoneOffset: string
+}): Promise<{getEventDataByFilter :EventCount[]}> => { 
+
+  
+  const query = gql`query GetEvent(
+    $eventSchemaId: Int
+    $metadataFilter: [metadataFilter!]!
+    $groupByMetadataSchemaIds: [MetadataSchemaGroupBy!]
+    $variantFilter: [Int!]
+  ) {
+    getEventDataByFilter(
+      filter: { 
+        eventSchemaId: $eventSchemaId
+        metadataFilter: $metadataFilter
+        groupByMetadataSchemaIds: $groupByMetadataSchemaIds 
+        variantFilter: $variantFilter
+      }
+    ) {
+      date
+      index
+      data { 
+        variantId
+        countValue
+        eventMetadatas{ 
+          metadataSchemaId
+          value
+        }
+      }
+    }
+  }`;
+  const { data } = await client.query({
+    query,
+    variables: {
+      eventSchemaId: eventSchemaId, 
+      metadataFilter: metadataFilter, 
+      variantFilter: variantFilter, 
+      groupByMetadataSchemaIds: [],
+    },
+    fetchPolicy: "network-only",
+    context: {
+      headers: {
+        timedelta: timezoneOffset,
+      },
+    },
+  });
+
+  return data as {getEventDataByFilter : EventCount[]};
+}
+
+
 export const getEventSchemaName = async ({
   id,
   client,
@@ -213,11 +336,17 @@ export const getEventSchemaName = async ({
   id: number;
   client: ApolloClient<NormalizedCacheObject>;
   timezoneOffset: string;
-}): Promise<IEventName> => {
+}): Promise<IEventSchema> => {
   const query = gql`
     query getEventSchema($eventSchemaId: Int!) {
       getEventSchema(eventSchemaId: $eventSchemaId) {
         eventName
+        eventSchemaId
+        eventMetadata{
+          metadataId
+          metadataName
+          metadataType
+        }
       }
     }
   `;
@@ -233,5 +362,37 @@ export const getEventSchemaName = async ({
       },
     },
   });
-  return data as IEventName;
+  return data as IEventSchema;
+};
+
+export interface IVariantName {
+  getVariants: { 
+    name: string;
+    variantId: number;
+  }[];
+}
+
+export const getVariantNames = async ({
+  experimentId,
+  client,
+}: {
+  experimentId: number;
+  client: ApolloClient<NormalizedCacheObject>
+}): Promise<IVariantName> => {
+  const query = gql`
+    query getVariants($experimentId: Int!) {
+      getVariants(experimentId:$experimentId){
+        name
+        variantId
+      }
+    }
+  `;
+  const { data } = await client.query({
+    query,
+    variables: {
+      experimentId: experimentId,
+    },
+    fetchPolicy: "network-only",
+  });
+  return data as IVariantName;
 };

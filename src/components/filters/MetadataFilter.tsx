@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   Box,
   Button,
@@ -9,35 +9,24 @@ import FilterInputDropdown from './FilterInputDropdown';
 import FilterInput from './FilterInput';
 import { computeMetadataLogic } from './utils/metadataFilterUtils';
 import { useFilters } from './context/FilterContext';
-
-const metadatasAvailable  = [ 
-  { 
-    name: "Metadata 1", 
-    type: "STRING", 
-    id: 1 
-  }, 
-  { 
-    name: "Metadata 2", 
-    type: "NUMBER", 
-    id: 2 
-  }, 
-  { 
-    name: "Metadata 3", 
-    type: "COLOR", 
-    id: 3
-  }
-]
+import { useEventSchema } from '../hooks/useEventSchema';
 
 const initialOperatorOptions = ['=', '>', '<', '<=', '>='];
 const initialPropertyOptions = ['Value of', 'Length of']
 
-const MetadataFilterForm = () => {
-  
-  const initialMetadataOptions = metadatasAvailable.map(metadata => metadata.name);
-  const { addMetadataFilter } = useFilters();
+const MetadataFilterForm = ({eventSchemaId}) => {
+  const { eventSchema, loading, error } = useEventSchema(eventSchemaId);
+
+  const metadatas = useMemo(() => {
+    return eventSchema?.getEventSchema?.eventMetadata ?? [];
+  }, [eventSchema]); 
+
+  const initialMetadataOptions =  eventSchema?.getEventSchema.eventMetadata.map(metadata=> metadata.metadataName)
+  const { addMetadataFilter, dataToRender } = useFilters();
 
   const [propertyValue, setPropertyValue] = useState('Value of');
-  const [metadataOptions, setMetadataOptions] = useState(initialMetadataOptions);
+  const [metadataOptions, setMetadataOptions] = useState<string[]>([]);
+
   const [operatorOptions, setOperatorOptions] = useState(initialOperatorOptions);
   const [propertyOptions, setPropertyOptions] = useState(initialPropertyOptions);
   const [metadataValue, setMetadataValue] = useState('');
@@ -45,6 +34,15 @@ const MetadataFilterForm = () => {
   const [operator, setOperator] = useState('');
   const [valueToCompare, setValueToCompare] = useState('');
   const toast = useToast();
+
+  useEffect(() => {
+    if (eventSchema?.getEventSchema?.eventMetadata) {
+      const initialMetadataOptions = eventSchema.getEventSchema.eventMetadata.map(metadata => metadata.metadataName);
+      setMetadataOptions(initialMetadataOptions);
+    }
+  }, [eventSchema]); // Depend on eventSchema so this runs whenever eventSchema changes
+
+
 
   function metadataSetter(value){ 
       setMetadataValue(value);
@@ -55,7 +53,7 @@ const MetadataFilterForm = () => {
   useEffect(() => {
     // Determine available properties and operators based on metadata type and property value
     const { propertyOptions, operatorOptions, hideProperty } = computeMetadataLogic(
-      metadatasAvailable, 
+      metadatas, 
       metadataValue, 
       propertyValue, 
       initialOperatorOptions, 
@@ -76,11 +74,14 @@ const MetadataFilterForm = () => {
     setOperatorOptions(operatorOptions);
     setHideProperty(hideProperty);
     
-  }, [metadataValue, propertyValue,operator, hideProperty]); // Include propertyValue in dependency array to re-evaluate when it changes
+  }, [metadataValue, propertyValue,operator, hideProperty, metadatas]); // Include propertyValue in dependency array to re-evaluate when it changes
 
+  useEffect(() =>{
+    console.log(dataToRender);
+  }, 
+  [dataToRender])
 
-
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     // Perform validation or any other operation before sending data
     if (!propertyValue || !metadataValue || !operator || !valueToCompare) {
       toast({
@@ -93,14 +94,16 @@ const MetadataFilterForm = () => {
     } else {
       // Process the data
       console.log(propertyValue, metadataValue);
-      const selectedMetadata = metadatasAvailable.find(metadata => metadata.name === metadataValue);
-      if(!addMetadataFilter({
-        metadataName: selectedMetadata?.name,
-        metadataId: selectedMetadata?.id,
-        operator: operator,
-        valueToCompare: valueToCompare,
-        propertyValue: propertyValue
-      })){ 
+      const selectedMetadata = metadatas.find(metadata => metadata.metadataName === metadataValue);
+      const metadataAdded = await addMetadataFilter({
+                                    metadataName: selectedMetadata?.metadataName,
+                                    metadataId: selectedMetadata?.metadataId,
+                                    operator: operator,
+                                    valueToCompare: valueToCompare,
+                                    propertyValue: propertyValue,
+                                  },eventSchemaId)
+      
+      if(!metadataAdded){ 
         toast({
           title: 'Error',
           description: 'Filter already exists',
@@ -111,7 +114,9 @@ const MetadataFilterForm = () => {
       }
     }
   };
-
+  if(loading){ 
+    return <></>
+  }
   return (
     <VStack spacing={4} align="stretch">
       <Box display="flex" justifyContent="space-between" gap="2">

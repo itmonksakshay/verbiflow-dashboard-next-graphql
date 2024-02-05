@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import {
   Box,
   Button,
@@ -7,32 +7,24 @@ import {
 } from '@chakra-ui/react';
 import FilterInputDropdown from './FilterInputDropdown';
 import { useFilters } from './context/FilterContext';
-
+import { useEventSchema } from '../hooks/useEventSchema';
+import { MetadataType } from '@/lib/gqls';
 
 const initialPropertyOptions = ['Value of', 'Length of']
-const metadatasAvailable  = [ 
-  { 
-    name: "Metadata 1", 
-    type: "STRING", 
-    id: 1 
-  }, 
-  { 
-    name: "Metadata 2", 
-    type: "NUMBER", 
-    id: 2 
-  }, 
-  { 
-    name: "Metadata 3", 
-    type: "COLOR", 
-    id: 3
-  }
-]
 
-const GroupBy = () => {
+
+const GroupBy = ({eventSchemaId}) => {
+  const { eventSchema, loading, error } = useEventSchema(eventSchemaId);
   const [propertyValue, setPropertyValue] = useState('Value of');
   const [metadataValue, setMetadataValue] = useState('');
+
   const [propertyOptions, setPropertyOptions] = useState(initialPropertyOptions);
-  const initialMetadataOptions = metadatasAvailable.map(metadata => metadata.name);
+
+  const metadatas = useMemo(() => {
+    console.log("ff",eventSchema)
+    return eventSchema?.getEventSchema?.eventMetadata ?? [];
+  }, [eventSchema]); // Dependency array to only recalculate if eventSchema changes
+  console.log("group by ", metadatas)
 
   const [hideProperty, setHideProperty] = useState(true);
   const { addGroupByFilter, filters } = useFilters();
@@ -50,14 +42,14 @@ const GroupBy = () => {
         isClosable: true,
       });
     } else {
-      const selectedMetadata = metadatasAvailable.find(metadata => metadata.name === metadataValue);
+      const selectedMetadata = metadatas.find(metadata => metadata.metadataName === metadataValue);
       
       // Process the data
       console.log(propertyValue, metadataValue);
 
       if(!addGroupByFilter({ 
-        metadataName: selectedMetadata?.name, 
-        metadataId: selectedMetadata?.id, 
+        metadataName: selectedMetadata?.metadataName, 
+        metadataId: selectedMetadata?.metadataId, 
         propertyValue: propertyValue
       })){ 
         toast({
@@ -71,14 +63,17 @@ const GroupBy = () => {
     }
   };
   useEffect(() => {
-    const selectedMetadata = metadatasAvailable.find(metadata => metadata.name === metadataValue);
-    if(selectedMetadata?.type === "STRING"){ 
+
+    const selectedMetadata = metadatas.find(metadata => metadata.metadataName === metadataValue);
+    if(selectedMetadata?.metadataType === MetadataType.STRING){ 
       setHideProperty(false); 
+      setPropertyOptions(["Value of", "Length of"]); 
     } else{ 
       setHideProperty(true); 
-      setPropertyValue("Value of")
+      setPropertyValue("Value of"); 
+      setPropertyOptions(["Value of"]);
     }
-  }, [metadataValue, propertyValue, hideProperty]); // Include propertyValue in dependency array to re-evaluate when it changes
+  }, [metadataValue, propertyValue, hideProperty, metadatas]); // Include propertyValue in dependency array to re-evaluate when it changes
 
 
 
@@ -96,7 +91,7 @@ const GroupBy = () => {
           value={metadataValue}
           setValue={setMetadataValue}
           label="Metadata Name"
-          options={initialMetadataOptions}
+          options={metadatas.map(metadata => metadata.metadataName)}
         />
       </Box>
       <Button

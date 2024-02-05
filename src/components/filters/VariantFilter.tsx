@@ -12,56 +12,48 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useFilters } from './context/FilterContext';
+import { useVariantList } from '../hooks/useVariantList';
 
 const VariantFilter = ({menuText}) => {
   const [searchValue, setSearchValue] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedItems, setSelectedItems] = useState({});
   const {addVariantFilter, filters, removeFilter} = useFilters();
+  const { variantNames, loading, error } = useVariantList(1);
+  
 
   // Dummy data for the list items
-  const listItems = [
-    'Variant 1',
-    'Variant 2',
-    'Variant 3'
-  ];
+  const listItems = variantNames?.getVariants ? variantNames?.getVariants.map(variantNameObj => {
+    return {name: variantNameObj.name, variantId: variantNameObj.variantId}
+  }) : [];
 
   const handleSearchChange = (e) => {
     setSearchValue(e.target.value);
   };
 
   const filteredItems = listItems.filter((item) =>
-    item.toLowerCase().includes(searchValue.toLowerCase())
+    item.name.toLowerCase().includes(searchValue.toLowerCase())
   );
 
 
-  useEffect(() => {
-    // Create a new selectedItems object based on the current filters
-    const newSelectedItems = { ...selectedItems };
-    Object.keys(selectedItems).forEach((item) => {
-      // If the item is not found in the filters.variantFilters, set it to false
-      if (!filters.variantFilters.some(filter => filter.variantName === item)) {
-        newSelectedItems[item] = false;
-      }
-    });
-    setSelectedItems(newSelectedItems);
-  }, [filters.variantFilters]);
+ 
 
 
   // Function to handle checkbox change
   const handleCheckboxChange = (item) => {
     setSelectedItems({
       ...selectedItems,
-      [item]: !selectedItems[item],
+      [item.variantId]: !selectedItems[item.variantId],
     });
 
-    if (!selectedItems[item]) {
+    if (!selectedItems[item.variantId]) {
       // Add the filter for the checked item
       addVariantFilter({ 
-        variantName: item
-      }); // You might need to adjust this call based on the expected parameter
+        variantName: item.name, 
+        variantId: item.variantId
+      }); 
     } else {
-      const index = filters.variantFilters.findIndex(variantFilter => variantFilter.variantName === item);
+      const index = filters.variantFilters.findIndex(variantFilter => variantFilter.variantId === item.variantId);
       if(index!== -1){ 
         removeFilter("variantFilters",index);
       }
@@ -69,7 +61,9 @@ const VariantFilter = ({menuText}) => {
   };
 
   const handleClick = (e) => e.stopPropagation();
-
+  if(loading){ 
+    return <></>
+  }
   return (
     <Menu isOpen={isOpen} onClose={onClose}>
       <MenuButton as={Button} onClick={onOpen} 
@@ -99,11 +93,11 @@ const VariantFilter = ({menuText}) => {
         </Box>
         <VStack align="stretch">
           {filteredItems.map((item) => (
-              <Box key={item} p={1} fontSize={"sm"} >
-                <Checkbox isChecked={selectedItems[item] } 
+              <Box key={item.variantId} p={1} fontSize={"sm"} >
+                <Checkbox isChecked={filters.variantFilters.some(filter => filter.variantId === item.variantId)}
                   fontSize="sm" // Ensure this matches the MenuButton font size
                   onChange={() => handleCheckboxChange(item)}>
-                  {item}
+                  {item.name}
                 </Checkbox>
               </Box>
             ))}

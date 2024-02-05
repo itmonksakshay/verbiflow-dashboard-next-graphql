@@ -6,6 +6,7 @@ import GroupByDropdown from './filters/GroupByDropdown';
 import MetadataFilterDropdown from './filters/MetadataFilterDropdown';
 import { FilterProvider } from './filters/context/FilterContext';
 
+
 // Dynamic imports for client-side components
 const DateRange = dynamic(() => import('./filters/DateRange'), {
   ssr: false,
@@ -18,9 +19,8 @@ const TagsDisplay = dynamic(() => import('./tags/Tag'), {
 const VariantFilter = dynamic(() => import( './filters/VariantFilter'), {
   ssr: false,
 });
-
-const FilterTagComponent: React.FC = () => {
-
+const FilterTagComponent: React.FC = ({eventSchemaId}) => {
+  
   return (
     <FilterProvider>
       <Stack spacing={4} width={"100%"}> {/* This Stack will organize children into two rows */}
@@ -33,13 +33,13 @@ const FilterTagComponent: React.FC = () => {
           </Box>
           <Box display="flex" justifyContent="flex-end" >
             <Box mr={2}> 
-              <GroupByDropdown menuText="Group By"  />
+              <GroupByDropdown menuText="Group By"  eventSchemaId={eventSchemaId}/>
             </Box>
             <Box mr={2}> 
               <VariantFilter menuText="Variants"  />
             </Box>
             <Box mr={2}> 
-              <MetadataFilterDropdown menuText="Metadata"  />
+              <MetadataFilterDropdown menuText="Metadata" eventSchemaId={eventSchemaId}  />
             </Box>
           </Box>
         </Grid>

@@ -1,16 +1,26 @@
 import React, { createContext, useContext, useState } from 'react';
 import { isEqual } from 'lodash';
+import { getMetadataFilterGraph, metadataFilterInternal } from './utils';
+import { getEventByFilter,EventCount } from '@/lib/gqls';
+import { getApolloClient } from '@/lib/apolloClient';
+
 const FilterContext = createContext(undefined);
 
 export const useFilters = () => useContext(FilterContext);
 
 export const FilterProvider = ({ children }) => {
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<
+    { 
+      variantFilters: [], 
+      metadataFilter: metadataFilterInternal[], 
+      groupBy: []
+    }
+  >({
     variantFilters: [],
     metadataFilter: [],
     groupBy: []
   });
-
+  const [dataToRender, setDataToRender] = useState<EventCount[]>([]);
 
   const addVariantFilter = (newFilter) => {
     // Here you would include logic to update the state with the new filter
@@ -48,7 +58,7 @@ export const FilterProvider = ({ children }) => {
 
 
   // Function to add a new filter
-  const addMetadataFilter = (newFilter) => {
+  const addMetadataFilter = async(newFilter: metadataFilterInternal, eventSchemaId: number) => {
     // Here you would include logic to update the state with the new filter
     // This is a simplified example
     const filterExists = filters.metadataFilter.some((filter) => { 
@@ -61,6 +71,17 @@ export const FilterProvider = ({ children }) => {
       ...currentFilters,
       metadataFilter: [...currentFilters.metadataFilter, newFilter]
     }));
+
+    const filterToGraph = [...filters.metadataFilter, newFilter].map(filter => getMetadataFilterGraph(filter) ); 
+    const client = getApolloClient()
+    const val = await getEventByFilter({ 
+      client: client, 
+      eventSchemaId: eventSchemaId, 
+      metadataFilter: filterToGraph,
+      variantFilter: [], 
+      timezoneOffset: "0"
+    });
+    setDataToRender(val.getEventDataByFilter)
     return true;
   };
 
@@ -86,7 +107,7 @@ export const FilterProvider = ({ children }) => {
   };
 
   return (
-    <FilterContext.Provider value={{ filters, addMetadataFilter, removeFilter, addGroupByFilter, addVariantFilter }}>
+    <FilterContext.Provider value={{ filters, addMetadataFilter, removeFilter, addGroupByFilter, addVariantFilter, dataToRender }}>
       {children}
     </FilterContext.Provider>
   );

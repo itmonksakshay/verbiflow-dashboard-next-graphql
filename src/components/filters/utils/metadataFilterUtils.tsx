@@ -1,10 +1,10 @@
 
 
 export function computeMetadataLogic(metadatasAvailable, metadataValue, propertyValue, initialOperatorOptions, initialPropertyOptions) {
-    const selectedMetadata = metadatasAvailable.find(metadata => metadata.name === metadataValue);
+    const selectedMetadata = metadatasAvailable.find(metadata => metadata.metadataName === metadataValue);
     if (selectedMetadata) {
       // Determine property options based on the metadata type
-      const propertyOptions = selectedMetadata.type === 'STRING' ? initialPropertyOptions : ['Value of'];
+      const propertyOptions = selectedMetadata.metadataType === 'STRING' ? initialPropertyOptions : ['Value of'];
       const hideProperty = propertyOptions.length < 2;
 
       
@@ -17,7 +17,7 @@ export function computeMetadataLogic(metadatasAvailable, metadataValue, property
     } else {
       // Default values if no metadata is selected
       return {
-        propertyOptions: ['Value', 'Length'],
+        propertyOptions: ['Value of', 'Length of'],
         operatorOptions: initialOperatorOptions,
         hideProperty: true,
       };

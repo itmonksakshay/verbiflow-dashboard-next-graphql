@@ -7,7 +7,7 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import GroupBy from './GroupBy';
-const GroupByDropdown = ({menuText}) => {
+const GroupByDropdown = ({menuText, eventSchemaId}) => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const handleClick = (e) => e.stopPropagation();
@@ -30,7 +30,7 @@ const GroupByDropdown = ({menuText}) => {
         {menuText}
       </MenuButton>
       <MenuList px={4} onClick={handleClick} >
-        <GroupBy/>
+        <GroupBy eventSchemaId={eventSchemaId}/>
       </MenuList>
     </Menu>
   );

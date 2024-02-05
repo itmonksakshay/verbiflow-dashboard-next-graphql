@@ -81,7 +81,6 @@ export default async function Page({ params }: { params: { id: string } }) {
     const bId = parseInt(b.label.replace("Variant ", ""), 10);
     return aId - bId;
   });
-
   const chartData = {
     labels: datesForLastDays,
     datasets: datasets,
@@ -94,7 +93,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       </Text>
        {/* Align FilterTagComponent to the left */}
       <Flex w={"100%"} justifyContent={"flex-start"} px={8}>
-        <FilterTagComponent />
+        <FilterTagComponent eventSchemaId={Number(schemaId)} />
       </Flex>
 
       <Center w={"100%"} h={"100%"} overflow={"auto"}>
