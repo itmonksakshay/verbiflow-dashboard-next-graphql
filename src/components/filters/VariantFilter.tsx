@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, ChangeEvent } from 'react';
 import {
   Box,
   Input,
@@ -27,7 +27,8 @@ const VariantFilter = ({menuText,eventSchemaId}) => {
     return {name: variantNameObj.name, variantId: variantNameObj.variantId}
   }) : [];
 
-  const handleSearchChange = (e: any) => {
+  
+  const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
 
