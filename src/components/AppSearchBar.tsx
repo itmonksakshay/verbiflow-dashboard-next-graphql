@@ -7,9 +7,9 @@ import { MdOutlineSearch } from "react-icons/md";
 export default function AppSearchBar({ searchValue }: { searchValue: string }) {
   const router = useRouter();
   const [inputValue, setInputValue] = useState(searchValue || "");
-  let debounceTimer: any;
+  let debounceTimer: NodeJS.Timeout;
 
-  function debounce(func: any, delay: number) {
+  function debounce(func: ()=> void, delay: number) {
     clearTimeout(debounceTimer);
     debounceTimer = setTimeout(func, delay);
   }

@@ -7,6 +7,7 @@ import { HStack, Text, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { adjustDateForTimezone } from "@/lib/utils";
+import { LabelEnum } from "@/context/enums";
 export default async function Page({
   searchParams,
 }: {
@@ -103,8 +104,8 @@ export default async function Page({
             });
           });
           const datasets = Object.values(datasetsMap).sort((a: any, b: any) => {
-            const aId = parseInt(a.label.replace("Variant ", ""), 10);
-            const bId = parseInt(b.label.replace("Variant ", ""), 10);
+            const aId = parseInt(a.label.replace(LabelEnum.VARIANT, ""), 10);
+            const bId = parseInt(b.label.replace(LabelEnum.VARIANT, ""), 10);
             return aId - bId;
           });
           const chartData = {

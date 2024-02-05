@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from 'react';
+import React, { useState, useEffect, ChangeEvent } from "react";
 import {
   Box,
   Input,
@@ -27,7 +27,6 @@ const VariantFilter = ({menuText,eventSchemaId}) => {
     return {name: variantNameObj.name, variantId: variantNameObj.variantId}
   }) : [];
 
-  
   const handleSearchChange = (e: ChangeEvent<HTMLInputElement>) => {
     setSearchValue(e.target.value);
   };
@@ -38,7 +37,6 @@ const VariantFilter = ({menuText,eventSchemaId}) => {
 
 
  
-
 
   // Function to handle checkbox change
   const handleCheckboxChange = async(item) => {
@@ -67,7 +65,9 @@ const VariantFilter = ({menuText,eventSchemaId}) => {
   }
   return (
     <Menu isOpen={isOpen} onClose={onClose}>
-      <MenuButton as={Button} onClick={onOpen}
+      <MenuButton
+        as={Button}
+        onClick={onOpen}
         size="sm"
         width="120px" // Adjust width as needed
         height="30px" // Match the height of the date input
@@ -75,14 +75,14 @@ const VariantFilter = ({menuText,eventSchemaId}) => {
         color="white"
         border="none"
         background="#2D3748"
-        _focus={{ boxShadow: 'none' }}
-        _hover={{ background: '#2D3748' }} // Keep background color on hover
-        _active={{ background: '#2D3748' }} // Keep background color when pressed
-        _placeholder={{ color: 'gray.300' }}
+        _focus={{ boxShadow: "none" }}
+        _hover={{ background: "#2D3748" }} // Keep background color on hover
+        _active={{ background: "#2D3748" }} // Keep background color when pressed
+        _placeholder={{ color: "gray.300" }}
       >
         {menuText}
       </MenuButton>
-      <MenuList px={4} onClick={handleClick} >
+      <MenuList px={4} onClick={handleClick}>
         <Box mb={4}>
           <Input
             placeholder="Search"

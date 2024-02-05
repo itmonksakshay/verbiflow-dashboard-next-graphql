@@ -1,4 +1,4 @@
-import React, { SetStateAction, useState } from 'react';
+import React, { ChangeEvent, SetStateAction, useState } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -11,7 +11,10 @@ const FilterInput = ({ label, value, setValue }: {
   setValue: React.Dispatch<SetStateAction<string>>
 }) => {
 
-  const handleChange = (event: any) => {
+
+  
+  
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     // Extract the value from the event object
     setValue(event.target.value);
     // Close the menu here if needed or manage the state to close it

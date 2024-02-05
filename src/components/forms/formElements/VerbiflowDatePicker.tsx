@@ -17,11 +17,12 @@ const VerbiflowDatePicker = ({ isLeft, isOpen, setIsOpen, setDateToRender, dateT
 }) => {
   const today = new Date();
 
+  
   console.log("minDate", startDate, "maxDate", today)
   // Close the picker if clicked outside
   useEffect(() => {
-    const handleClickOutside = (event: any) => {
-      if (!event.target.closest('.react-datepicker-wrapper') && !event.target.closest('.react-datepicker')) {
+    const handleClickOutside = (event: MouseEvent|any) => {
+      if (!event.target?.closest('.react-datepicker-wrapper') && !event.target?.closest('.react-datepicker')) {
         setIsOpen(false);
       }
     };

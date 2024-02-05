@@ -22,6 +22,7 @@ import {
 import { cookies } from "next/headers";
 import React from 'react';
 import dynamic from 'next/dynamic';
+import { LabelEnum } from "@/context/enums";
 
 const FilterTagComponent = dynamic(() => import("@/components/FilterTagComponent"), { ssr: false });
 
@@ -77,8 +78,8 @@ export default async function Page({ params }: { params: { id: string } }) {
     });
   });
   const datasets = Object.values(datasetsMap).sort((a: any, b: any) => {
-    const aId = parseInt(a.label.replace("Variant ", ""), 10);
-    const bId = parseInt(b.label.replace("Variant ", ""), 10);
+    const aId = parseInt(a.label.replace(LabelEnum.VARIANT, ""), 10);
+    const bId = parseInt(b.label.replace(LabelEnum.VARIANT, ""), 10);
     return aId - bId;
   });
   const chartData = {
