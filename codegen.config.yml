@@ -1,0 +1,10 @@
+schema:
+  - "https://verbiflow.com/graphql" 
+documents:
+  - "./graphql/**/*.graphql"
+generates:
+  ./src/gql/:
+    plugins:
+      - typescript
+      - typescript-operations
+      - typescript-react-apollo

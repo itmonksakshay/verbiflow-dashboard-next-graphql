@@ -204,97 +204,97 @@ export const getEventCountById = async ({
 };
 
 export enum operator {
-  EQUALS="EQUALS",
-  GREATER_THAN="GREATER_THAN",
-  LESS_THAN="LESS_THAN",
-  GREATER_THAN_OR_EQUAL="GREATER_THAN_OR_EQUAL",
-  LESS_THAN_OR_EQUAL="LESS_THAN_OR_EQUAL"
+  EQUALS = "EQUALS",
+  GREATER_THAN = "GREATER_THAN",
+  LESS_THAN = "LESS_THAN",
+  GREATER_THAN_OR_EQUAL = "GREATER_THAN_OR_EQUAL",
+  LESS_THAN_OR_EQUAL = "LESS_THAN_OR_EQUAL"
 }
 
-export enum MetadataPropertyOperations { 
-  VALUE="VALUE",
-  LENGTH="LENGTH", 
-  STARTS_WITH="STARTS_WITH",
-  ENDS_WITH="ENDS_WITH"
+export enum MetadataPropertyOperations {
+  VALUE = "VALUE",
+  LENGTH = "LENGTH",
+  STARTS_WITH = "STARTS_WITH",
+  ENDS_WITH = "ENDS_WITH"
 }
 
-export type MetadataOperator = { 
+export type MetadataOperator = {
   metadataSchemaId: number;
   operation: MetadataPropertyOperations;
 }
 
-export type MetadataFilter = { 
+export type MetadataFilter = {
   metadataOperator: MetadataOperator;
   value: String;
   operator: operator;
-} 
-
-
-export enum GroupByProperties { 
-  VALUE="VALUE",
-  LENGTH="LENGTH"
 }
 
-export type MetadataSchemaGroupBy = { 
+
+export enum GroupByProperties {
+  VALUE = "VALUE",
+  LENGTH = "LENGTH"
+}
+
+export type MetadataSchemaGroupBy = {
   metadataSchemaId: number;
   property: GroupByProperties
-} 
+}
 
 export enum MetadataType {
-  STRING="STRING",
-  NUMBER="NUMBER",
-  BOOLEAN="BOOLEAN",
-  COLOR="COLOR"
+  STRING = "STRING",
+  NUMBER = "NUMBER",
+  BOOLEAN = "BOOLEAN",
+  COLOR = "COLOR"
 }
 
 
-export type EventDataFilter = { 
-  variantFilter: number[] 
-  metadataFilter: MetadataFilter[] 
+export type EventDataFilter = {
+  variantFilter: number[]
+  metadataFilter: MetadataFilter[]
 }
 
 export interface IEventSchema {
-  getEventSchema: { 
-    eventName: string; 
-    eventSchemaId: number; 
+  getEventSchema: {
+    eventName: string;
+    eventSchemaId: number;
     eventMetadata: {
-				metadataId: number; 
-				metadataName: string
-				metadataType: MetadataType
-			}[]
+      metadataId: number;
+      metadataName: string
+      metadataType: MetadataType
+    }[]
   };
 }
 
-export type EventCount = { 
-  data: { 
-    countValue: number; 
+export type EventCount = {
+  data: {
+    countValue: number;
     eventMetadatas: {
-      metadataSchemaId: number; 
-      value: String; 
-    }[], 
-    variantId: number; 
-  }; 
-  date: string; 
+      metadataSchemaId: number;
+      value: String;
+    }[],
+    variantId: number;
+  };
+  date: string;
   index: number;
 }
 
-export const getEventByFilter = async ({ 
+export const getEventByFilter = async ({
   eventSchemaId,
-  metadataFilter, 
+  metadataFilter,
   client,
   groupByFilter,
-  variantFilter, 
-  timezoneOffset, 
-}: { 
+  variantFilter,
+  timezoneOffset,
+}: {
   client: ApolloClient<NormalizedCacheObject>;
   eventSchemaId: number;
   metadataFilter: MetadataFilter[];
   groupByFilter: MetadataSchemaGroupBy[];
-  variantFilter:  number[]; 
+  variantFilter: number[];
   timezoneOffset: string;
-}): Promise<{getEventDataByFilter :EventCount[]}> => { 
+}): Promise<{ getEventDataByFilter: EventCount[] }> => {
 
-  
+
   const query = gql`query GetEvent(
     $eventSchemaId: Int
     $metadataFilter: [metadataFilter!]!
@@ -324,9 +324,9 @@ export const getEventByFilter = async ({
   const { data } = await client.query({
     query,
     variables: {
-      eventSchemaId: eventSchemaId, 
-      metadataFilter: metadataFilter, 
-      variantFilter: variantFilter, 
+      eventSchemaId: eventSchemaId,
+      metadataFilter: metadataFilter,
+      variantFilter: variantFilter,
       groupByMetadataSchemaIds: groupByFilter,
     },
     fetchPolicy: "network-only",
@@ -337,7 +337,7 @@ export const getEventByFilter = async ({
     },
   });
 
-  return data as {getEventDataByFilter : EventCount[]};
+  return data as { getEventDataByFilter: EventCount[] };
 }
 
 
@@ -379,7 +379,7 @@ export const getEventSchemaName = async ({
 };
 
 export interface IVariantName {
-  getVariants: { 
+  getVariants: {
     name: string;
     variantId: number;
   }[];
