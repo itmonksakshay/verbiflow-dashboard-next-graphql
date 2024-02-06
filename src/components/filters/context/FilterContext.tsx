@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { isEqual } from 'lodash';
-import { getMetadataFilterGraph, metadataFilterInternal } from './utils';
+import { getGroupByGraph, getMetadataFilterGraph, groupByInternal, metadataFilterInternal } from './utils';
 import { getEventByFilter,EventCount } from '@/lib/gqls';
 import { getApolloClient } from '@/lib/apolloClient';
 
@@ -13,7 +13,7 @@ export const FilterProvider = ({ children }) => {
     { 
       variantFilters: [], 
       metadataFilter: metadataFilterInternal[], 
-      groupBy: []
+      groupBy: groupByInternal[]
     }
   >({
     variantFilters: [],
@@ -22,7 +22,7 @@ export const FilterProvider = ({ children }) => {
   });
   const [dataToRender, setDataToRender] = useState<EventCount[]>([]);
 
-  const addVariantFilter = (newFilter) => {
+  const addVariantFilter = async (newFilter, eventSchemaId) => {
     // Here you would include logic to update the state with the new filter
     // This is a simplified example
     const filterExists = filters.variantFilters.some((filter) => { 
@@ -32,14 +32,32 @@ export const FilterProvider = ({ children }) => {
     if(filterExists){ 
         return false;
     }
+
     setFilters((currentFilters) => ({
       ...currentFilters,
       variantFilters: [...currentFilters.variantFilters, newFilter]
     }));
+
+    const metadataFilterToGraph = filters.metadataFilter.map(filter => getMetadataFilterGraph(filter) ); 
+    const groupByFilterToGraph =  filters.groupBy.map(filter => getGroupByGraph(filter));
+    const variantFilter = [...filters.variantFilters, newFilter].map(filter => filter.variantId)
+    
+    const client = getApolloClient();
+    const val = await getEventByFilter({ 
+      client: client, 
+      eventSchemaId: eventSchemaId, 
+      metadataFilter: metadataFilterToGraph,
+      groupByFilter: groupByFilterToGraph,
+      variantFilter: variantFilter, 
+      timezoneOffset: "0"
+    });
+
+    setDataToRender(val.getEventDataByFilter)
+
     return true;
   };
 
-  const addGroupByFilter = (newFilter) => {
+  const addGroupByFilter = async(newFilter: groupByInternal, eventSchemaId: number) => {
     // Here you would include logic to update the state with the new filter
     // This is a simplified example
     const filterExists = filters.groupBy.some((filter) => { 
@@ -53,6 +71,23 @@ export const FilterProvider = ({ children }) => {
       ...currentFilters,
       groupBy: [...currentFilters.groupBy, newFilter]
     }));
+
+    const metadataFilterToGraph = filters.metadataFilter.map(filter => getMetadataFilterGraph(filter) ); 
+    const groupByFilterToGraph =  [...filters.groupBy,newFilter].map(filter => getGroupByGraph(filter));
+    const variantFilter = filters.variantFilters.map(filter => filter.variantId);
+
+    const client = getApolloClient();
+    const val = await getEventByFilter({ 
+      client: client, 
+      eventSchemaId: eventSchemaId, 
+      metadataFilter: metadataFilterToGraph,
+      groupByFilter: groupByFilterToGraph,
+      variantFilter: variantFilter, 
+      timezoneOffset: "0"
+    });
+
+    setDataToRender(val.getEventDataByFilter)
+
     return true;
   };
 
@@ -72,13 +107,17 @@ export const FilterProvider = ({ children }) => {
       metadataFilter: [...currentFilters.metadataFilter, newFilter]
     }));
 
-    const filterToGraph = [...filters.metadataFilter, newFilter].map(filter => getMetadataFilterGraph(filter) ); 
-    const client = getApolloClient()
+    const metadataFilterToGraph = [...filters.metadataFilter, newFilter].map(filter => getMetadataFilterGraph(filter) ); 
+    const groupByFilterToGraph =  filters.groupBy.map(filter => getGroupByGraph(filter));
+    const variantFilter = filters.variantFilters.map(filter => filter.variantId);
+
+    const client = getApolloClient();
     const val = await getEventByFilter({ 
       client: client, 
       eventSchemaId: eventSchemaId, 
-      metadataFilter: filterToGraph,
-      variantFilter: [], 
+      metadataFilter: metadataFilterToGraph,
+      groupByFilter: groupByFilterToGraph,
+      variantFilter: variantFilter, 
       timezoneOffset: "0"
     });
     setDataToRender(val.getEventDataByFilter)
@@ -86,24 +125,41 @@ export const FilterProvider = ({ children }) => {
   };
 
   // Function to remove a filter by index
-  const removeFilter = ( filterType,index) => {
+  const removeFilter = async( filterType,index, eventSchemaId) => {
+    let filterToSet = filters;
     if(filterType === "metadataFilter"){ 
-        setFilters((currentFilters) => ({
-            ...currentFilters,
-            metadataFilter: currentFilters.metadataFilter.filter((_, i) => i !== index)
-          }));
+        filterToSet = {
+            ...filters,
+            metadataFilter: filters.metadataFilter.filter((_, i) => i !== index)
+        };
     } else if(filterType === "groupBy"){ 
-        setFilters((currentFilters) => ({
-            ...currentFilters,
-            groupBy: currentFilters.groupBy.filter((_, i) => i !== index)
-        }));
+      filterToSet = {
+          ...filters,
+          groupBy: filters.groupBy.filter((_, i) => i !== index)
+      };
     } else if(filterType === "variantFilters"){ 
-        setFilters((currentFilters) => ({
-            ...currentFilters,
-            variantFilters: currentFilters.variantFilters.filter((_, i) => i !== index)
-        }));
+        filterToSet = {
+          ...filters,
+          variantFilters: filters.variantFilters.filter((_, i) => i !== index)
+        };
     }
- 
+    setFilters(filterToSet);
+    const metadataFilterToGraph = filterToSet.metadataFilter.map(filter => getMetadataFilterGraph(filter) ); 
+    const groupByFilterToGraph =  filterToSet.groupBy.map(filter => getGroupByGraph(filter));
+    const variantFilter = filterToSet.variantFilters.map(filter => filter.variantId);
+
+    const client = getApolloClient();
+    const val = await getEventByFilter({ 
+      client: client, 
+      eventSchemaId: eventSchemaId, 
+      metadataFilter: metadataFilterToGraph,
+      groupByFilter: groupByFilterToGraph,
+      variantFilter: variantFilter, 
+      timezoneOffset: "0"
+    });
+    
+    setDataToRender(val.getEventDataByFilter)
+    return true;
   };
 
   return (

@@ -1,7 +1,14 @@
-import { MetadataFilter, MetadataPropertyOperations, operator as operatorGraph} from "@/lib/gqls";
+import { MetadataFilter, MetadataPropertyOperations, operator as operatorGraph, MetadataSchemaGroupBy, GroupByProperties} from "@/lib/gqls";
+
 export enum PropertyValue { 
-  LENGTH,
-  VALUE_OF
+  LENGTH="LENGTH",
+  VALUE_OF="VALUE_OF", 
+  STARTS_WITH="STARTS_WITH", 
+  ENDS_WITH="ENDS_WITH"
+}
+export enum GroupByPropertiesInternal { 
+  LENGTH="Length of", 
+  VALUE_OF="Value of"
 }
 
 export type metadataFilterInternal = {
@@ -10,6 +17,12 @@ export type metadataFilterInternal = {
   operator: "<" | ">" | "=" | "<=" | ">="
   valueToCompare: string,
   propertyValue: PropertyValue
+}
+
+export type groupByInternal = { 
+  metadataName: string; 
+  metadataId: number;
+  propertyValue: GroupByPropertiesInternal;
 }
 
 function convertPropertyValueGraphEnum(property: string): MetadataPropertyOperations { 
@@ -38,6 +51,18 @@ function convertOperator(operator:  "<" | ">" | "=" | "<=" | ">="): operatorGrap
   throw new Error("Unknown property");
 }
 
+
+
+function convertGroupByProperty(groupbyProperty:GroupByPropertiesInternal  ): GroupByProperties { 
+  console.log("group by ", groupbyProperty);
+  if(groupbyProperty === GroupByPropertiesInternal.LENGTH){ 
+    return GroupByProperties.LENGTH; 
+  } else if(groupbyProperty === GroupByPropertiesInternal.VALUE_OF){ 
+    return GroupByProperties.VALUE; 
+  } 
+  throw new Error("Unknown property");
+}
+
 export function getMetadataFilterGraph(metadataFilter: metadataFilterInternal ): MetadataFilter { 
   return { 
     metadataOperator: {
@@ -46,5 +71,13 @@ export function getMetadataFilterGraph(metadataFilter: metadataFilterInternal ):
     },
     value: metadataFilter.valueToCompare,
     operator: convertOperator(metadataFilter.operator)
+  }
+}
+
+
+export function getGroupByGraph(groupByFilter: groupByInternal ): MetadataSchemaGroupBy { 
+  return { 
+    metadataSchemaId: groupByFilter.metadataId,
+    property: convertGroupByProperty(groupByFilter.propertyValue)
   }
 }

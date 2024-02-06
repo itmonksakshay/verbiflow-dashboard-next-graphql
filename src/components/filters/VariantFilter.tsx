@@ -14,7 +14,7 @@ import {
 import { useFilters } from './context/FilterContext';
 import { useVariantList } from '../hooks/useVariantList';
 
-const VariantFilter = ({menuText}) => {
+const VariantFilter = ({menuText,eventSchemaId}) => {
   const [searchValue, setSearchValue] = useState('');
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedItems, setSelectedItems] = useState({});
@@ -40,7 +40,7 @@ const VariantFilter = ({menuText}) => {
 
 
   // Function to handle checkbox change
-  const handleCheckboxChange = (item) => {
+  const handleCheckboxChange = async(item) => {
     setSelectedItems({
       ...selectedItems,
       [item.variantId]: !selectedItems[item.variantId],
@@ -48,14 +48,14 @@ const VariantFilter = ({menuText}) => {
 
     if (!selectedItems[item.variantId]) {
       // Add the filter for the checked item
-      addVariantFilter({ 
+      await addVariantFilter({ 
         variantName: item.name, 
         variantId: item.variantId
-      }); 
+      },eventSchemaId); 
     } else {
       const index = filters.variantFilters.findIndex(variantFilter => variantFilter.variantId === item.variantId);
       if(index!== -1){ 
-        removeFilter("variantFilters",index);
+        await removeFilter("variantFilters",index,eventSchemaId);
       }
     }
   };

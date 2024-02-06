@@ -6,7 +6,7 @@ import { useFilters } from '../filters/context/FilterContext';
 import MetadataFilterTag from './MetadataFilterTag';
 
 
-const TagsDisplay: React.FC<{}> = () => {
+const TagsDisplay: React.FC<{}> = ({eventSchemaId}) => {
   const { filters, removeFilter } = useFilters();
   
   const uniqueMetadataIds = new Set(filters.metadataFilter.map(filter => filter.metadataId));
@@ -30,7 +30,7 @@ const TagsDisplay: React.FC<{}> = () => {
         <Wrap>
           { uniqueMetadataFilters.map((filter, index) => (
             <WrapItem key={index}>
-              <MetadataFilterTag name={filter.metadataName} metadataId={filter.metadataId} ></MetadataFilterTag>
+              <MetadataFilterTag name={filter.metadataName} metadataId={filter.metadataId} eventSchemaId={eventSchemaId}></MetadataFilterTag>
             </WrapItem>
           ))}
         </Wrap>
@@ -42,7 +42,7 @@ const TagsDisplay: React.FC<{}> = () => {
             <WrapItem key={index}>
               <Tag size="md" borderRadius="full" variant="solid" colorScheme="orange" m="1">
                 <TagLabel>{`${filter.variantName}`}</TagLabel>
-                <TagCloseButton onClick={() => removeFilter("variantFilters",index)} />
+                <TagCloseButton onClick={() => removeFilter("variantFilters",index,eventSchemaId)} />
               </Tag>
             </WrapItem>
           ))}
@@ -54,8 +54,8 @@ const TagsDisplay: React.FC<{}> = () => {
             {filters.groupBy.map((filter, index) => (
               <WrapItem key={index}>
                 <Tag size="md" borderRadius="full" variant="solid" colorScheme="green" m="1">
-                  <TagLabel>{`${filter.metadataName}`}</TagLabel>
-                  <TagCloseButton onClick={() => removeFilter("groupBy",index)} />
+                  <TagLabel>{`${filter.propertyValue } ${filter.metadataName}`}</TagLabel>
+                  <TagCloseButton onClick={() => removeFilter("groupBy",index,eventSchemaId)} />
                 </Tag>
               </WrapItem>
             

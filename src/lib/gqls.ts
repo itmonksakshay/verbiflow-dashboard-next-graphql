@@ -229,11 +229,22 @@ export type MetadataFilter = {
   operator: operator;
 } 
 
+
+export enum GroupByProperties { 
+  VALUE="VALUE",
+  LENGTH="LENGTH"
+}
+
+export type MetadataSchemaGroupBy = { 
+  metadataSchemaId: number;
+  property: GroupByProperties
+} 
+
 export enum MetadataType {
-  STRING,
-  NUMBER,
-  BOOLEAN,
-  COLOR
+  STRING="STRING",
+  NUMBER="NUMBER",
+  BOOLEAN="BOOLEAN",
+  COLOR="COLOR"
 }
 
 
@@ -271,14 +282,16 @@ export const getEventByFilter = async ({
   eventSchemaId,
   metadataFilter, 
   client,
+  groupByFilter,
   variantFilter, 
-  timezoneOffset
+  timezoneOffset, 
 }: { 
   client: ApolloClient<NormalizedCacheObject>;
   eventSchemaId: number;
   metadataFilter: MetadataFilter[];
+  groupByFilter: MetadataSchemaGroupBy[];
   variantFilter:  number[]; 
-  timezoneOffset: string
+  timezoneOffset: string;
 }): Promise<{getEventDataByFilter :EventCount[]}> => { 
 
   
@@ -314,7 +327,7 @@ export const getEventByFilter = async ({
       eventSchemaId: eventSchemaId, 
       metadataFilter: metadataFilter, 
       variantFilter: variantFilter, 
-      groupByMetadataSchemaIds: [],
+      groupByMetadataSchemaIds: groupByFilter,
     },
     fetchPolicy: "network-only",
     context: {

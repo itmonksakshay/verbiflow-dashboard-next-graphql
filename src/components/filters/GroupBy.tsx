@@ -19,19 +19,18 @@ const GroupBy = ({eventSchemaId}) => {
   const [metadataValue, setMetadataValue] = useState('');
 
   const [propertyOptions, setPropertyOptions] = useState(initialPropertyOptions);
+  const { addGroupByFilter, filters } = useFilters();
 
   const metadatas = useMemo(() => {
-    console.log("ff",eventSchema)
-    return eventSchema?.getEventSchema?.eventMetadata ?? [];
-  }, [eventSchema]); // Dependency array to only recalculate if eventSchema changes
-  console.log("group by ", metadatas)
+    const filterMetadataNames = new Set(filters.groupBy.map(filter => filter.metadataName));
+    return eventSchema?.getEventSchema?.eventMetadata?.filter(metadata => !filterMetadataNames.has(metadata.metadataName)) ?? [];
+  },[eventSchema,filters])
 
   const [hideProperty, setHideProperty] = useState(true);
-  const { addGroupByFilter, filters } = useFilters();
 
 
   const toast = useToast();
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // Perform validation or any other operation before sending data
     if (!propertyValue || !metadataValue) {
       toast({
@@ -43,15 +42,14 @@ const GroupBy = ({eventSchemaId}) => {
       });
     } else {
       const selectedMetadata = metadatas.find(metadata => metadata.metadataName === metadataValue);
-      
-      // Process the data
-      console.log(propertyValue, metadataValue);
-
-      if(!addGroupByFilter({ 
+      const groupByAdded = await addGroupByFilter({ 
         metadataName: selectedMetadata?.metadataName, 
         metadataId: selectedMetadata?.metadataId, 
         propertyValue: propertyValue
-      })){ 
+      }, eventSchemaId)
+      
+      // Process the data
+      if(!groupByAdded){ 
         toast({
           title: 'Error',
           description: 'Filter already exists',
@@ -60,14 +58,16 @@ const GroupBy = ({eventSchemaId}) => {
           isClosable: true,
         });
       }
+      setPropertyValue('Value of'); 
+      setMetadataValue('');
     }
   };
   useEffect(() => {
-
     const selectedMetadata = metadatas.find(metadata => metadata.metadataName === metadataValue);
     if(selectedMetadata?.metadataType === MetadataType.STRING){ 
       setHideProperty(false); 
       setPropertyOptions(["Value of", "Length of"]); 
+
     } else{ 
       setHideProperty(true); 
       setPropertyValue("Value of"); 

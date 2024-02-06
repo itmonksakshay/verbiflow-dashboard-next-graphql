@@ -78,6 +78,44 @@ const MetadataFilterForm = ({eventSchemaId}) => {
 
   useEffect(() =>{
     console.log(dataToRender);
+    // Initialize arrays to store labels and datasets
+    let labels = []; // to store unique dates
+    let datasets = {}; // to store count values, indexed by variantId
+    if(dataToRender){ 
+        // Parse the data
+        let labels = []; // For storing unique dates
+        let datasets = []; // For datasets representing each variantId and metadata value combination
+        let datasetMap = {}; // A map to easily find datasets
+    
+        dataToRender.forEach(event => {
+          labels.push(event.date); // Assuming each event date is unique
+    
+          event.data.forEach(item => {
+            let metadataKeys =  item.eventMetadatas.map((metadataVal)=> { 
+              return `${metadataVal.metadataSchemaId} ${metadataVal.value}`
+            })
+            let key = metadataKeys.join(" ");
+    
+            key = `Variant ${item.variantId} ${key}`
+            if (!datasetMap[key]) {
+              let newDataset = {
+                label: key,
+                data: new Array(dataToRender.length).fill(0),
+                backgroundColor: "#fffff",
+                stack: `Variant ${item.variantId}`
+              };
+              datasets.push(newDataset);
+              datasetMap[key] = newDataset;
+            }
+            let dateIndex = labels.indexOf(event.date);
+            datasetMap[key].data[dateIndex] += item.countValue;
+    
+          });
+      });
+
+      console.log(datasets); 
+      console.log(labels);
+    }
   }, 
   [dataToRender])
 

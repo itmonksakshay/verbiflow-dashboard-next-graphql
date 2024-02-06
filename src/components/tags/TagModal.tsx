@@ -54,7 +54,7 @@ const FilterTagRow = ({ filter, onRemove }) => {
   );
 };
 
-const TagListModal = ({ isOpen, onClose, metadataId, metadataName }) => {
+const TagListModal = ({ isOpen, onClose, metadataId, metadataName, eventSchemaId }) => {
   const [search, setSearch] = useState('');
   const { filters, removeFilter } = useFilters();
   const tags = filters.metadataFilter.filter(metadataFilter => { 
@@ -82,7 +82,7 @@ const TagListModal = ({ isOpen, onClose, metadataId, metadataName }) => {
         <ModalCloseButton />
         <ModalBody>
           <Input
-            placeholder="Search tags..."
+            placeholder="Filter search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             mb={4}
@@ -95,7 +95,7 @@ const TagListModal = ({ isOpen, onClose, metadataId, metadataName }) => {
                 onRemove={() => { 
                   filters.metadataFilter.forEach((filterToCompare, filterToCompareIndex) => { 
                     if(isEqual(filterToCompare, filter)){ 
-                      removeFilter("metadataFilter",filterToCompareIndex)
+                      removeFilter("metadataFilter",filterToCompareIndex,eventSchemaId)
                     }
                   })
                 }}
