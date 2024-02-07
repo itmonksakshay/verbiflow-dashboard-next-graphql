@@ -13,12 +13,9 @@ import {
 import { useFilters } from "../filters/context/FilterContext";
 import MetadataFilterTag from "./MetadataFilterTag";
 
-const TagsDisplay: React.FC<{}> = ({eventSchemaId}) => {
+const TagsDisplay: React.FC<{eventSchemaId: number}> = ({eventSchemaId}) => {
   const { filters, removeFilter } = useFilters();
 
-  const uniqueMetadataIds = new Set(
-    filters.metadataFilter.map((filter) => filter.metadataId)
-  );
 
   const uniqueMetadataFilters = filters.metadataFilter.filter(
     (filter, index, self) =>

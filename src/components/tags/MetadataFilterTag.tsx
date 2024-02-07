@@ -4,7 +4,7 @@ import { Tag, TagLabel, useDisclosure } from "@chakra-ui/react";
 import { useFilters } from "../filters/context/FilterContext";
 import TagListModal from "./TagModal";
 
-const MetadataFilterTag: React.FC<{name: string; metadataId: number; eventSchemaId: number}> = ({name, metadataId}) => {
+const MetadataFilterTag: React.FC<{name: string; metadataId: number; eventSchemaId: number}> = ({name, metadataId, eventSchemaId}) => {
   const { isOpen, onOpen, onClose } = useDisclosure(); // Hook to manage modal state
   const { filters } = useFilters();
 

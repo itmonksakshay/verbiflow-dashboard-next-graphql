@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, Dispatch, SetStateAction } from 'react';
 import {
   Box,
   Button,
@@ -9,13 +9,14 @@ import FilterInputDropdown from '../forms/formElements/FilterInputDropdown';
 import { useFilters } from './context/FilterContext';
 import { useEventSchema } from '../hooks/useEventSchema';
 import { MetadataType } from '@/lib/gqls';
+import { GroupByPropertiesInternal } from './context/utils';
 
-const initialPropertyOptions = ['Value of', 'Length of']
+const initialPropertyOptions: GroupByPropertiesInternal[] = [GroupByPropertiesInternal.VALUE_OF, GroupByPropertiesInternal.LENGTH]
 
 
-const GroupBy = ({eventSchemaId}) => {
+const GroupBy = ({eventSchemaId}: {eventSchemaId: number}) => {
   const { eventSchema, loading, error } = useEventSchema(eventSchemaId);
-  const [propertyValue, setPropertyValue] = useState('Value of');
+  const [propertyValue, setPropertyValue] = useState<GroupByPropertiesInternal>(GroupByPropertiesInternal.VALUE_OF);
   const [metadataValue, setMetadataValue] = useState('');
 
   const [propertyOptions, setPropertyOptions] = useState(initialPropertyOptions);
@@ -27,8 +28,11 @@ const GroupBy = ({eventSchemaId}) => {
   },[eventSchema,filters])
 
   const [hideProperty, setHideProperty] = useState(true);
-
-
+  
+ 
+  const handleUpdate = (updateVal: string) => { 
+    setPropertyValue(updateVal as GroupByPropertiesInternal);
+  }
   const toast = useToast();
   const handleSubmit = async () => {
     // Perform validation or any other operation before sending data
@@ -42,6 +46,9 @@ const GroupBy = ({eventSchemaId}) => {
       });
     } else {
       const selectedMetadata = metadatas.find(metadata => metadata.metadataName === metadataValue);
+      if(!selectedMetadata){ 
+        throw new Error("unknown error");
+      }
       const groupByAdded = await addGroupByFilter({ 
         metadataName: selectedMetadata?.metadataName, 
         metadataId: selectedMetadata?.metadataId, 
@@ -58,7 +65,7 @@ const GroupBy = ({eventSchemaId}) => {
           isClosable: true,
         });
       }
-      setPropertyValue('Value of'); 
+      setPropertyValue(GroupByPropertiesInternal.VALUE_OF); 
       setMetadataValue('');
     }
   };
@@ -66,23 +73,25 @@ const GroupBy = ({eventSchemaId}) => {
     const selectedMetadata = metadatas.find(metadata => metadata.metadataName === metadataValue);
     if(selectedMetadata?.metadataType === MetadataType.STRING){ 
       setHideProperty(false); 
-      setPropertyOptions(["Value of", "Length of"]); 
+      setPropertyOptions([GroupByPropertiesInternal.VALUE_OF, GroupByPropertiesInternal.LENGTH]); 
 
     } else{ 
       setHideProperty(true); 
-      setPropertyValue("Value of"); 
-      setPropertyOptions(["Value of"]);
+      setPropertyValue(GroupByPropertiesInternal.VALUE_OF); 
+      setPropertyOptions([GroupByPropertiesInternal.VALUE_OF]);
     }
   }, [metadataValue, propertyValue, hideProperty, metadatas]); // Include propertyValue in dependency array to re-evaluate when it changes
 
 
-
+  if(loading){ 
+    return <></>
+  }
   return (
     <VStack spacing={4} align="stretch">
       <Box display="flex" justifyContent="space-between" gap="2">
         <FilterInputDropdown
           value={propertyValue}
-          setValue={setPropertyValue}
+          setValue={handleUpdate }
           label="Property"
           options={propertyOptions}
           isHidden={ hideProperty}

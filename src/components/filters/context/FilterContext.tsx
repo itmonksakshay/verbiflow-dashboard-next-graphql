@@ -1,17 +1,42 @@
 import React, { SetStateAction, createContext, useContext, useState } from 'react';
 import { isEqual } from 'lodash';
-import { getGroupByGraph, getMetadataFilterGraph, groupByInternal, metadataFilterInternal } from './utils';
+import { getGroupByGraph, getMetadataFilterGraph, groupByInternal, metadataFilterInternal, variantFilterInternal } from './utils';
 import { getEventByFilter,EventCount } from '@/lib/gqls';
 import { getApolloClient } from '@/lib/apolloClient';
 
-const FilterContext = createContext(undefined);
+interface FiltersState {
+  variantFilters: variantFilterInternal[];
+  metadataFilter: metadataFilterInternal[];
+  groupBy: groupByInternal[];
+}
 
-export const useFilters = () => useContext(FilterContext);
+// Define a type for the context value including the setters
+interface FilterContextType {
+  filters: FiltersState;
+  addMetadataFilter: (filter: metadataFilterInternal, eventSchemaId: number ) => Promise<boolean>; // Example function type
+  removeFilter: (filterType: "variantFilters" | "metadataFilter" | "groupBy" , index: number, eventSchemaId: number) =>  Promise<boolean>; // Example function type
+  addGroupByFilter: (filter: groupByInternal, eventSchemaId: number) =>  Promise<boolean>; // Example function type
+  addVariantFilter: (filter: variantFilterInternal,eventSchemaId: number) =>  Promise<boolean>; // Example function type
+  dataToRender: EventCount[]; // Specify a more accurate type if possible
+}
 
-export const FilterProvider = ({ children }) => {
+
+const FilterContext = createContext<FilterContextType | undefined>(undefined);
+
+export const useFilters = (): FilterContextType  => { 
+  const context = useContext(FilterContext);
+  if (context === undefined) {
+    throw new Error('useFilters must be used within a FilterProvider');
+  }
+  return context;
+}
+
+
+
+export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [filters, setFilters] = useState<
     { 
-      variantFilters: [], 
+      variantFilters: variantFilterInternal[], 
       metadataFilter: metadataFilterInternal[], 
       groupBy: groupByInternal[]
     }
@@ -22,7 +47,7 @@ export const FilterProvider = ({ children }) => {
   });
   const [dataToRender, setDataToRender] = useState<EventCount[]>([]);
 
-  const addVariantFilter = async (newFilter, eventSchemaId) => {
+  const addVariantFilter = async (newFilter: variantFilterInternal , eventSchemaId: number) => {
     // Here you would include logic to update the state with the new filter
     // This is a simplified example
     const filterExists = filters.variantFilters.some((filter) => {
@@ -124,7 +149,7 @@ export const FilterProvider = ({ children }) => {
   };
 
   // Function to remove a filter by index
-  const removeFilter = async( filterType,index, eventSchemaId) => {
+  const removeFilter = async( filterType: "variantFilters" | "metadataFilter" | "groupBy" ,index: number , eventSchemaId: number): Promise<boolean> => {
     let filterToSet = filters;
     if(filterType === "metadataFilter"){ 
         filterToSet = {

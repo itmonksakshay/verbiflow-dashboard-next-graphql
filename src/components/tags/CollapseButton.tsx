@@ -5,7 +5,10 @@ import { Flex, IconButton} from '@chakra-ui/react';
 import { useFilters } from '../filters/context/FilterContext';
 import { ChevronUpIcon, ChevronDownIcon } from '@chakra-ui/icons';
 
-const CollapseButton: React.FC<> = ({isTagsVisible, setIsTagsVisible}) => {
+const CollapseButton: React.FC<{
+  isTagsVisible: boolean;
+  setIsTagsVisible: React.Dispatch<React.SetStateAction<boolean>>;
+}> = ({isTagsVisible, setIsTagsVisible}) => {
   const {filters} = useFilters(); 
   return (
     <>

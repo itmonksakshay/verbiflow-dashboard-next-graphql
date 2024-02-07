@@ -68,7 +68,13 @@ const FilterTagRow = ({
   );
 };
 
-const TagListModal = ({ isOpen, onClose, metadataId, metadataName, eventSchemaId }) => {
+const TagListModal = ({ isOpen, onClose, metadataId, metadataName, eventSchemaId }: {
+  isOpen: boolean; 
+  onClose: () => void; 
+  metadataId: number; 
+  metadataName: string; 
+  eventSchemaId: number;
+ }) => {
   const [search, setSearch] = useState('');
   const { filters, removeFilter } = useFilters();
   const tags = filters.metadataFilter.filter((metadataFilter) => {
@@ -114,7 +120,7 @@ const TagListModal = ({ isOpen, onClose, metadataId, metadataName, eventSchemaId
                     if(isEqual(filterToCompare, filter)){ 
                       removeFilter("metadataFilter",filterToCompareIndex,eventSchemaId)
                     }
-                  );
+                  })
                 }}
               />
             ))}

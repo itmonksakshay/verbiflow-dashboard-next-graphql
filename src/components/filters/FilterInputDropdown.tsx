@@ -16,7 +16,8 @@ const FilterInputDropdown = ({ label, options, value, setValue, isHidden = false
   label: string,
   value: string,
   isHidden?: boolean,
-  setValue: (val:string)=> void,
+  // setValue: React.Dispatch<SetStateAction<string>>,
+  setValue: (val: string) => void,
   options: Array<string>
 
 }) => {

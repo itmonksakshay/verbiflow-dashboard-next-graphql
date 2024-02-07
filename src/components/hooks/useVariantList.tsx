@@ -7,7 +7,7 @@ import { getApolloClient } from "@/lib/apolloClient";
 export function useVariantList(experimentId: number) {
     const [variantNames, setVariantNames] = useState<null |IVariantName> (null);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [error, setError] = useState<unknown>(null);
     const client = getApolloClient()
     useEffect(() => {
       const fetchEventSchema = async () => {

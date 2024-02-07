@@ -1,8 +1,8 @@
 import { MetadataFilter, MetadataPropertyOperations, operator as operatorGraph, MetadataSchemaGroupBy, GroupByProperties} from "@/lib/gqls";
 
 export enum PropertyValue { 
-  LENGTH="LENGTH",
-  VALUE_OF="VALUE_OF", 
+  LENGTH="LENGTH OF",
+  VALUE_OF="VALUE OF", 
   STARTS_WITH="STARTS_WITH", 
   ENDS_WITH="ENDS_WITH"
 }
@@ -11,12 +11,23 @@ export enum GroupByPropertiesInternal {
   VALUE_OF="Value of"
 }
 
+export type operatorInternal =  "<" | ">" | "=" | "<=" | ">="; 
+
+export type timestampFilterInternal = { 
+  startDate: number; 
+  endDate: number; 
+}
 export type metadataFilterInternal = {
   metadataName: string;
   metadataId: number;
-  operator: "<" | ">" | "=" | "<=" | ">="
+  operator: operatorInternal
   valueToCompare: string,
   propertyValue: PropertyValue
+}
+
+export type variantFilterInternal = { 
+  variantName: string; 
+  variantId: number;
 }
 
 export type groupByInternal = { 
@@ -25,11 +36,11 @@ export type groupByInternal = {
   propertyValue: GroupByPropertiesInternal;
 }
 
-function convertPropertyValueGraphEnum(property: string): MetadataPropertyOperations { 
+function convertPropertyValueGraphEnum(property: PropertyValue): MetadataPropertyOperations { 
   console.log("property",property)
-  if(property === "Length of"){ 
+  if(property === PropertyValue.LENGTH){ 
     return MetadataPropertyOperations.LENGTH
-  } else if(property === "Value of"){ 
+  } else if(property ===  PropertyValue.VALUE_OF){ 
     return MetadataPropertyOperations.VALUE
   }
   throw new Error("Unknown propery")

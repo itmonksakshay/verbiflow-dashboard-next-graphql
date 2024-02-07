@@ -1,7 +1,10 @@
 import { ApolloClient, NormalizedCacheObject, gql } from "@apollo/client";
+
+
 interface IDailyVisitors {
   getUniqueVisitorCount: number;
 }
+
 export const getUniqueVisitorsByDate = async ({
   date,
   client,
@@ -11,6 +14,7 @@ export const getUniqueVisitorsByDate = async ({
   client: ApolloClient<NormalizedCacheObject>;
   timezoneOffset: string;
 }): Promise<IDailyVisitors> => {
+
   const query = gql`
     query GetUniqueVisitorCount($date: String!) {
       getUniqueVisitorCount(date: $date)
@@ -253,15 +257,22 @@ export type EventDataFilter = {
   metadataFilter: MetadataFilter[]
 }
 
+export type Metadata =  {
+  metadataId: number;
+  metadataName: string
+  metadataType: MetadataType
+}
+
+export type timestamp ={ 
+  from: number; 
+  to: number
+}
+
 export interface IEventSchema {
   getEventSchema: {
     eventName: string;
     eventSchemaId: number;
-    eventMetadata: {
-      metadataId: number;
-      metadataName: string
-      metadataType: MetadataType
-    }[]
+    eventMetadata: Metadata[]
   };
 }
 
@@ -273,7 +284,7 @@ export type EventCount = {
       value: String;
     }[],
     variantId: number;
-  };
+  }[];
   date: string;
   index: number;
 }
@@ -284,7 +295,7 @@ export const getEventByFilter = async ({
   client,
   groupByFilter,
   variantFilter,
-  timezoneOffset,
+  timezoneOffset
 }: {
   client: ApolloClient<NormalizedCacheObject>;
   eventSchemaId: number;
@@ -321,6 +332,8 @@ export const getEventByFilter = async ({
       }
     }
   }`;
+
+
   const { data } = await client.query({
     query,
     variables: {
@@ -378,11 +391,12 @@ export const getEventSchemaName = async ({
   return data as IEventSchema;
 };
 
+export type VariantName = {
+  name: string;
+  variantId: number;
+}
 export interface IVariantName {
-  getVariants: {
-    name: string;
-    variantId: number;
-  }[];
+  getVariants: VariantName[];
 }
 
 export const getVariantNames = async ({

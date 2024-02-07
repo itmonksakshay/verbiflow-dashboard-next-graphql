@@ -1,139 +1,139 @@
-import React, { useEffect, useState } from "react";
-import { Box, Button, VStack, useToast } from "@chakra-ui/react";
-import FilterInputDropdown from "./formElements/FilterInputDropdown";
-import FilterInput from "./formElements/FilterInput";
-import { computeMetadataLogic } from "../filters/utils/metadataFilterUtils";
-import { useFilters } from "../filters/context/FilterContext";
+import React, { useEffect, useState, useMemo } from 'react';
+import {
+  Box,
+  Button,
+  VStack,
+  useToast,
+} from '@chakra-ui/react';
+import FilterInputDropdown from './formElements/FilterInputDropdown';
+import FilterInput from '../filters/FilterInput';
+import { computeMetadataLogic } from '../filters/utils/metadataFilterUtils';
+import { useFilters } from '../filters/context/FilterContext';
+import { useEventSchema } from '../hooks/useEventSchema';
+import { PropertyValue, operatorInternal } from '../filters/context/utils';
 
-const metadatasAvailable = [
-  {
-    name: "Metadata 1",
-    type: "STRING",
-    id: 1,
-  },
-  {
-    name: "Metadata 2",
-    type: "NUMBER",
-    id: 2,
-  },
-  {
-    name: "Metadata 3",
-    type: "COLOR",
-    id: 3,
-  },
-];
+const initialOperatorOptions: operatorInternal[] = ['=', '>', '<', '<=', '>='];
+const initialPropertyOptions = [PropertyValue.VALUE_OF, PropertyValue.LENGTH]
 
-const initialOperatorOptions = ["=", ">", "<", "<=", ">="];
-const initialPropertyOptions = ["Value of", "Length of"];
+const MetadataFilterForm = ({eventSchemaId}: {eventSchemaId: number}) => {
+  const { eventSchema, loading, error } = useEventSchema(eventSchemaId);
 
-const MetadataFilterForm = () => {
-  const initialMetadataOptions = metadatasAvailable.map(
-    (metadata) => metadata.name
-  );
+  const metadatas = useMemo(() => {
+    return eventSchema?.getEventSchema?.eventMetadata ?? [];
+  }, [eventSchema]); 
+
   const { addMetadataFilter } = useFilters();
 
-  const [propertyValue, setPropertyValue] = useState("Value of");
-  const [metadataOptions, setMetadataOptions] = useState(
-    initialMetadataOptions
-  );
-  const [operatorOptions, setOperatorOptions] = useState(
-    initialOperatorOptions
-  );
-  const [propertyOptions, setPropertyOptions] = useState(
-    initialPropertyOptions
-  );
-  const [metadataValue, setMetadataValue] = useState("");
+  const [propertyValue, setPropertyValue] = useState<PropertyValue>(PropertyValue.VALUE_OF);
+  const [metadataOptions, setMetadataOptions] = useState<string[]>([]);
+
+  const [operatorOptions, setOperatorOptions] = useState(initialOperatorOptions);
+  const [propertyOptions, setPropertyOptions] = useState(initialPropertyOptions);
+  const [metadataValue, setMetadataValue] = useState('');
   const [hideProperty, setHideProperty] = useState(true);
-  const [operator, setOperator] = useState("");
-  const [valueToCompare, setValueToCompare] = useState("");
+  const [operator, setOperator] = useState<operatorInternal | null>(null);
+  const [valueToCompare, setValueToCompare] = useState('');
   const toast = useToast();
 
-  React.useEffect(() => {
-    setOperator("");
-    setPropertyValue("Value of");
-  }, [metadataValue]);
+  useEffect(() => {
+    if (eventSchema?.getEventSchema?.eventMetadata) {
+      const initialMetadataOptions = eventSchema.getEventSchema.eventMetadata.map(metadata => metadata.metadataName);
+      setMetadataOptions(initialMetadataOptions);
+    }
+  }, [eventSchema]); // Depend on eventSchema so this runs whenever eventSchema changes
+
+
+
+  function metadataSetter(value: string){ 
+      setMetadataValue(value);
+      setOperator(null); 
+      setPropertyValue(PropertyValue.VALUE_OF);
+  }
 
   useEffect(() => {
     // Determine available properties and operators based on metadata type and property value
-    const { propertyOptions, operatorOptions, hideProperty } =
-      computeMetadataLogic(
-        metadatasAvailable,
-        metadataValue,
-        propertyValue,
-        initialOperatorOptions,
-        initialPropertyOptions
-      );
+    const { propertyOptions, operatorOptions, hideProperty } = computeMetadataLogic(
+      metadatas, 
+      metadataValue, 
+      propertyValue, 
+      initialOperatorOptions, 
+      initialPropertyOptions
+    );
 
     if (!propertyOptions.includes(propertyValue)) {
-      setPropertyValue("Value of");
+      setPropertyValue(PropertyValue.VALUE_OF);
       setValueToCompare("");
     }
 
-    if (!operatorOptions.includes(operator)) {
-      setOperator("");
+    if (!operator || !operatorOptions.includes(operator)) {
+      setOperator(null);
       setValueToCompare("");
     }
 
     setPropertyOptions(propertyOptions);
     setOperatorOptions(operatorOptions);
     setHideProperty(hideProperty);
-  }, [metadataValue, propertyValue, operator, hideProperty]); // Include propertyValue in dependency array to re-evaluate when it changes
+    
+  }, [metadataValue, propertyValue,operator, hideProperty, metadatas]); // Include propertyValue in dependency array to re-evaluate when it changes
 
-  const handleSubmit = () => {
+  const handleSubmit = async() => {
     // Perform validation or any other operation before sending data
     if (!propertyValue || !metadataValue || !operator || !valueToCompare) {
       toast({
-        title: "Error",
-        description: "All fields must have an input",
-        status: "error",
+        title: 'Error',
+        description: 'All fields must have an input',
+        status: 'error',
         duration: 3000,
         isClosable: true,
       });
     } else {
       // Process the data
       console.log(propertyValue, metadataValue);
-      const selectedMetadata = metadatasAvailable.find(
-        (metadata) => metadata.name === metadataValue
-      );
-      if (
-        !addMetadataFilter({
-          metadataName: selectedMetadata?.name,
-          metadataId: selectedMetadata?.id,
-          operator: operator,
-          valueToCompare: valueToCompare,
-          propertyValue: propertyValue,
-        })
-      ) {
+      const selectedMetadata = metadatas.find(metadata => metadata.metadataName === metadataValue);
+      if(!selectedMetadata){ 
+        throw new Error("unknown error");
+      }
+      const metadataAdded = await addMetadataFilter({
+                                    metadataName: selectedMetadata?.metadataName,
+                                    metadataId: selectedMetadata?.metadataId,
+                                    operator: operator,
+                                    valueToCompare: valueToCompare,
+                                    propertyValue: propertyValue,
+                                  },eventSchemaId)
+      
+      if(!metadataAdded){ 
         toast({
-          title: "Error",
-          description: "Filter already exists",
-          status: "error",
+          title: 'Error',
+          description: 'Filter already exists',
+          status: 'error',
           duration: 3000,
           isClosable: true,
         });
       }
     }
   };
-
+  if(loading){ 
+    return <></>
+  }
   return (
     <VStack spacing={4} align="stretch">
       <Box display="flex" justifyContent="space-between" gap="2">
         <FilterInputDropdown
           value={propertyValue}
-          setValue={setPropertyValue}
+          setValue={(value: string)=> setPropertyValue(value as PropertyValue)}
           isHidden={hideProperty}
           label="Property"
           options={propertyOptions}
         />
         <FilterInputDropdown
           value={metadataValue}
-          setValue={setMetadataValue}
+          setValue={metadataSetter}
           label="Metadata Name"
           options={metadataOptions}
         />
         <FilterInputDropdown
-          value={operator}
-          setValue={setOperator}
+          value={operator ?? ""}
+          setValue={(value: string)=> setOperator(value as operatorInternal)}
           label="Operator"
           options={operatorOptions}
         />
@@ -144,16 +144,13 @@ const MetadataFilterForm = () => {
         />
       </Box>
       <Button
-        _placeholder={{ color: "gray.300" }}
-        _hover={{ bg: "gray.700" }}
-        _focus={{ outline: "none", bg: "gray.700" }}
+        _placeholder={{ color: 'gray.300' }}
+        _hover={{ bg: 'gray.700' }}
+        _focus={{ outline: 'none', bg: 'gray.700' }}
         onClick={handleSubmit}
         width="40%"
         alignSelf={"center"}
-      >
-        {" "}
-        Add Filter{" "}
-      </Button>
+      > Add Filter </Button>
     </VStack>
   );
 };

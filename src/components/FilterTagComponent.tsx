@@ -1,7 +1,7 @@
 "use client";
 import React, {useState} from 'react';
 import dynamic from 'next/dynamic';
-import {  Grid, Box, Stack, Flex, IconButton, Collapse, useDisclosure } from '@chakra-ui/react';
+import {  Grid, Box, Stack, Collapse, useDisclosure } from '@chakra-ui/react';
 import GroupByDropdown from './filters/GroupByDropdown';
 import MetadataFilterDropdown from './filters/MetadataFilterDropdown';
 import { FilterProvider } from './filters/context/FilterContext';
@@ -18,11 +18,11 @@ const TagsDisplay = dynamic(() => import('./tags/Tag'), {
   ssr: false,
 });
 
-const VariantFilter = dynamic(() => import( './forms/formElements/VariantFilterForm'), {
+const VariantFilter = dynamic(() => import( './filters/VariantFilter'), {
   ssr: false,
 });
 
-const FilterTagComponent: React.FC = ({eventSchemaId}) => {
+const FilterTagComponent: React.FC<{eventSchemaId: number}> = ({eventSchemaId}) => {
   const [isTagsVisible, setIsTagsVisible] = useState(true);
   const { isOpen, onToggle } = useDisclosure();
 
@@ -49,6 +49,7 @@ const FilterTagComponent: React.FC = ({eventSchemaId}) => {
             </Box>
           </Box>
         </Grid>
+        <AppStackedBarChart />
       </Stack>
     </FilterProvider>
   );

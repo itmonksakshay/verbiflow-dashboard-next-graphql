@@ -13,6 +13,7 @@ import {
 import { Chart } from "react-chartjs-2";
 import { useFilters } from "../filters/context/FilterContext";
 import { useEventSchema } from "../hooks/useEventSchema";
+import { EventCount } from "@/lib/gqls";
 
 ChartJS.register(
   CategoryScale,
@@ -22,6 +23,13 @@ ChartJS.register(
   Title,
   Legend
 );
+
+export type ChartJSDataset  =  { 
+  label: string;
+  data: number[]; 
+  backgroundColor: string;
+  stack:string;
+}
 
 const AppStackedBarChart = () => {
 
@@ -55,27 +63,26 @@ const AppStackedBarChart = () => {
     }
     return color;
   };
-  
+
   // Processing the provided data to fit Chart.js structure
-  const processData = (datas) => {
+  const processData = (datas: EventCount[]) => {
     // Initialize arrays to store labels and datasets
     // Parse the data
-    let labels = []; // For storing unique dates
-    let datasets = []; // For datasets representing each variantId and metadata value combination
-    let datasetMap = {}; // A map to easily find datasets
+    let labels: string[] = []; // For storing unique dates
+    let datasets: ChartJSDataset[] = []; // For datasets representing each variantId and metadata value combination
+    let datasetMap :Map<string,ChartJSDataset> = new Map(); // A map to easily find datasets
 
     datas.forEach(event => {
       labels.push(event.date); // Assuming each event date is unique
-
       event.data.forEach(item => {
         let metadataKeys =  item.eventMetadatas.map((metadataVal)=> { 
           if(metadataIdToName.get(metadataVal.metadataSchemaId))
-          return `${metadataIdToName.get(metadataVal.metadataSchemaId)} ${metadataVal.value}`
+            return `${metadataIdToName.get(metadataVal.metadataSchemaId)} ${metadataVal.value}`
         })
         let key = metadataKeys.join(" ");
 
         key = `Variant ${item.variantId} ${key}`
-        if (!datasetMap[key]) {
+        if (!datasetMap.has(key)) {
           let newDataset = {
             label: key,
             data: new Array(datas.length).fill(0),
@@ -83,12 +90,15 @@ const AppStackedBarChart = () => {
             stack: `Variant ${item.variantId}`
           };
           datasets.push(newDataset);
-          datasetMap[key] = newDataset;
+          datasetMap.set(key,newDataset);
         } 
         let dateIndex = labels.indexOf(event.date);
-        datasetMap[key].data[dateIndex] += item.countValue;
+        const existingData = datasetMap.get(key); 
+        if(existingData){ 
+          existingData.data[dateIndex] += item.countValue;
+        }
       });
-    });
+    })
     console.log(datasets);
     return { labels, datasets };
   };
@@ -100,24 +110,6 @@ const AppStackedBarChart = () => {
     datasets: datasets,
   };
 
-  const options = {
-    responsive: true,
-    scales: {
-      x: { stacked: true },
-      y: { stacked: true }
-    },
-    plugins: {
-      tooltip: {
-        callbacks: {
-          label: (tooltipItem) => {
-            let label = tooltipItem.dataset.label || '';
-            let value = tooltipItem.parsed.y;
-            return `${label}: ${value}`;
-          }
-        }
-      }
-    }
-  };
   const horizontal = false; 
   const h = "100%" 
   const y_title = "event"

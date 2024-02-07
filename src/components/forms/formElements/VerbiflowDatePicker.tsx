@@ -77,7 +77,7 @@ const VerbiflowDatePicker = ({ isLeft, isOpen, setIsOpen, setDateToRender, dateT
             minDate={isStartDate ? null : startDate}
             maxDate={isStartDate ? endDate : today}
             selected={dateToRender}
-            onChange={(date) => {
+            onChange={(date: Date | null) => {
               if (date) {
                 setDateToRender(date);
               }
