@@ -7,6 +7,7 @@ import MetadataFilterDropdown from './filters/MetadataFilterDropdown';
 import { FilterProvider } from './filters/context/FilterContext';
 import CollapseButton from './tags/CollapseButton';
 import AppStackedBarChart from './charts/AppStackedBarChart';
+import { createPortal } from 'react-dom';
 
 
 // Dynamic imports for client-side components
@@ -22,9 +23,11 @@ const VariantFilter = dynamic(() => import( './filters/VariantFilter'), {
   ssr: false,
 });
 
-const FilterTagComponent: React.FC<{eventSchemaId: number}> = ({eventSchemaId}) => {
+const FilterTagComponent: React.FC<{eventSchemaId: number;timezoneOffset:string}> = ({eventSchemaId,timezoneOffset}) => {
   const [isTagsVisible, setIsTagsVisible] = useState(true);
   const { isOpen, onToggle } = useDisclosure();
+
+  const barGraphNode = document.getElementById('filterBarChart');
 
   return (
     <FilterProvider>
@@ -48,8 +51,8 @@ const FilterTagComponent: React.FC<{eventSchemaId: number}> = ({eventSchemaId}) 
               <MetadataFilterDropdown menuText="Metadata" eventSchemaId={eventSchemaId}  />
             </Box>
           </Box>
+          {createPortal(<AppStackedBarChart schemaId={eventSchemaId} timezoneOffset={timezoneOffset} />,barGraphNode as Element)}
         </Grid>
-        <AppStackedBarChart />
       </Stack>
     </FilterProvider>
   );

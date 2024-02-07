@@ -14,6 +14,8 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  */
 const documents = {
     "\nquery GetEventByCountryCity {\n  getEventByCountryCity {\n    country\n    city\n    count\n  }\n}\n": types.GetEventByCountryCityDocument,
+    "\nquery GetEventSchemaCountById($eventSchemaId: Int!) {\n  getEventCount(eventSchemaId: $eventSchemaId) {\n    date\n    data {\n      countValue\n      variantId\n    }\n  }\n}\n": types.GetEventSchemaCountByIdDocument,
+    "\nquery GetEventSchemas {\n  getEventSchemas {\n    eventSchemaId\n    eventName\n  }\n}\n": types.GetEventSchemasDocument,
     "\nquery GetAverageSessionTime {\n  getAverageSessionTime\n}\n": types.GetAverageSessionTimeDocument,
     "\nquery GetUniqueVisitorCount($date: String!) {\n  getUniqueVisitorCount(date: $date)\n}\n": types.GetUniqueVisitorCountDocument,
     "\nquery GetUniqueVisitorsInterval(\n  $startingDate: String!\n  $endingDate: String!\n) {\n  getUniqueVisitorsInterval(\n    startingDate: $startingDate\n    endingDate: $endingDate\n  ) {\n    date\n    count\n  }\n}\n": types.GetUniqueVisitorsIntervalDocument,
@@ -46,6 +48,14 @@ export function gql(source: string): unknown;
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\nquery GetEventByCountryCity {\n  getEventByCountryCity {\n    country\n    city\n    count\n  }\n}\n"): (typeof documents)["\nquery GetEventByCountryCity {\n  getEventByCountryCity {\n    country\n    city\n    count\n  }\n}\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nquery GetEventSchemaCountById($eventSchemaId: Int!) {\n  getEventCount(eventSchemaId: $eventSchemaId) {\n    date\n    data {\n      countValue\n      variantId\n    }\n  }\n}\n"): (typeof documents)["\nquery GetEventSchemaCountById($eventSchemaId: Int!) {\n  getEventCount(eventSchemaId: $eventSchemaId) {\n    date\n    data {\n      countValue\n      variantId\n    }\n  }\n}\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nquery GetEventSchemas {\n  getEventSchemas {\n    eventSchemaId\n    eventName\n  }\n}\n"): (typeof documents)["\nquery GetEventSchemas {\n  getEventSchemas {\n    eventSchemaId\n    eventName\n  }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -1,6 +1,7 @@
 
 import { typescriptApolloClient } from "@/lib/apolloClient";
 import { gql } from '@/gql/gql';
+import { ChartData } from "chart.js";
 
 type IProps = {
     startingDate:string;
@@ -52,7 +53,7 @@ const useGetUniqueVisitorsChartData=async({startingDate,endingDate,timezoneOffse
       const uniqueVisitorsDataPoints = uniqueVisitorsInterval.map(
         (item) => item.count
       );
-      const uniqueVisitorsChartData = {
+      const uniqueVisitorsChartData:ChartData<'bar',number[]> = {
         labels: uniqueVisitorsLabels,
         datasets: [
           {
