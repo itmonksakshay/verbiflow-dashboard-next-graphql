@@ -34,6 +34,7 @@ const FilterInputDropdown = ({ label, options, value, setValue, isHidden = false
         {/* The MenuButton is responsible for opening/closing the MenuList */}
         <MenuButton as={InputGroup} cursor="pointer" >
           <Input
+            borderColor="rgb(255,255,255,0.16)"
             placeholder={label}
             value={value}
             readOnly
@@ -44,9 +45,9 @@ const FilterInputDropdown = ({ label, options, value, setValue, isHidden = false
             pointerEvents="none"
           />
         </MenuButton>
-        <MenuList>
+        <MenuList background="#2D3748" borderColor="rgb(255,255,255,0.16)">
           {options.map((option) => (
-            <MenuItem key={option} onClick={() => handleChange(option)} _focus={{ background: undefined }} backgroundColor={value === option ? 'gray.600' : undefined}>
+            <MenuItem  key={option} onClick={() => handleChange(option)} _focus={{ background: undefined }} backgroundColor={value === option ? 'gray.600' :"#2D3748"}>
               {option}
             </MenuItem>
           ))}

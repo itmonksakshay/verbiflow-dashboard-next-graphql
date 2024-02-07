@@ -30,7 +30,7 @@ const MetadataFilterDropdown = ({menuText, eventSchemaId}: {menuText: string; ev
       >
         {menuText}
       </MenuButton>
-      <MenuList px={4} onClick={handleClick} >
+      <MenuList px={4} onClick={handleClick} background="#2D3748" borderColor="rgb(255,255,255,0.16)" >
         <MetadataFilterForm eventSchemaId={eventSchemaId}/>
       </MenuList>
     </Menu>

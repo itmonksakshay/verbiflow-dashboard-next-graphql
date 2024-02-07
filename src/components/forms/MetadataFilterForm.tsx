@@ -150,6 +150,8 @@ const MetadataFilterForm = ({eventSchemaId}: {eventSchemaId: number}) => {
         onClick={handleSubmit}
         width="40%"
         alignSelf={"center"}
+        color={'whiteAlpha.900'}
+        bg={'whiteAlpha.200'}
       > Add Filter </Button>
     </VStack>
   );

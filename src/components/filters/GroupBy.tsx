@@ -107,6 +107,8 @@ const GroupBy = ({eventSchemaId}: {eventSchemaId: number}) => {
         _placeholder={{ color: 'gray.300' }}
         _hover={{ bg: 'gray.700' }}
         _focus={{ outline: 'none', bg: 'gray.700' }}
+        color={'whiteAlpha.900'}
+        bg={'whiteAlpha.200'}
         onClick={handleSubmit}
       > Group </Button>
     </VStack>

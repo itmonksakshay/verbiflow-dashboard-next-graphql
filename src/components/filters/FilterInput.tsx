@@ -22,6 +22,7 @@ const FilterInput = ({ label, value, setValue }: {
     <FormControl>
       <FormLabel fontSize="sm" color="gray.400">{label}</FormLabel>
       <Input
+      borderColor="rgb(255,255,255,0.16)"
         placeholder={label}
         value={value}
         _placeholder={{ color: 'gray.300' }}

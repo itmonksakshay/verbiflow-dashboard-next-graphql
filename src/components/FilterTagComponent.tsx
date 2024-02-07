@@ -30,7 +30,7 @@ const FilterTagComponent: React.FC<{eventSchemaId: number;timezoneOffset:string}
   const barGraphNode = document.getElementById('filterBarChart');
 
   return (
-    <FilterProvider>
+    <FilterProvider eventSchemaId={eventSchemaId}>
       <Stack spacing={4} width={"100%"}> {/* This Stack will organize children into two rows */}
         <CollapseButton isTagsVisible={isTagsVisible} setIsTagsVisible={setIsTagsVisible}/>
         <Collapse in={isTagsVisible} animateOpacity style={{ width: '100%' }}>
@@ -51,7 +51,7 @@ const FilterTagComponent: React.FC<{eventSchemaId: number;timezoneOffset:string}
               <MetadataFilterDropdown menuText="Metadata" eventSchemaId={eventSchemaId}  />
             </Box>
           </Box>
-          {createPortal(<AppStackedBarChart schemaId={eventSchemaId} timezoneOffset={timezoneOffset} />,barGraphNode as Element)}
+          {barGraphNode && createPortal(<AppStackedBarChart />,barGraphNode )}
         </Grid>
       </Stack>
     </FilterProvider>

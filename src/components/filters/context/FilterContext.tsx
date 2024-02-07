@@ -1,4 +1,4 @@
-import React, { SetStateAction, createContext, useContext, useState } from 'react';
+import React, { SetStateAction, createContext, useContext, useEffect, useState } from 'react';
 import { isEqual } from 'lodash';
 import { getGroupByGraph, getMetadataFilterGraph, groupByInternal, metadataFilterInternal, variantFilterInternal } from './utils';
 import { getEventByFilter,EventCount } from '@/lib/gqls';
@@ -33,7 +33,7 @@ export const useFilters = (): FilterContextType  => {
 
 
 
-export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const FilterProvider: React.FC<{ children: React.ReactNode;eventSchemaId:number }> = ({ children,eventSchemaId }) => {
   const [filters, setFilters] = useState<
     { 
       variantFilters: variantFilterInternal[], 
@@ -45,7 +45,27 @@ export const FilterProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     metadataFilter: [],
     groupBy: [],
   });
+
   const [dataToRender, setDataToRender] = useState<EventCount[]>([]);
+
+  const getInitialValues = async()=>{
+    const client = getApolloClient();
+    const val = await getEventByFilter({ 
+      client: client, 
+      eventSchemaId: eventSchemaId, 
+      metadataFilter: [],
+      groupByFilter: [],
+      variantFilter: [], 
+      timezoneOffset: "0"
+    });
+    setDataToRender(val.getEventDataByFilter)
+  }
+
+  useEffect(()=>{
+
+    getInitialValues();
+
+  },[])
 
   const addVariantFilter = async (newFilter: variantFilterInternal , eventSchemaId: number) => {
     // Here you would include logic to update the state with the new filter

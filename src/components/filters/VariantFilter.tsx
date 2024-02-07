@@ -79,9 +79,10 @@ const VariantFilter = ({menuText,eventSchemaId}: {menuText: string; eventSchemaI
       >
         {menuText}
       </MenuButton>
-      <MenuList px={4} onClick={handleClick} >
+      <MenuList px={4} onClick={handleClick} background="#2D3748" borderColor="rgb(255,255,255,0.16)" >
         <Box mb={4}>
           <Input
+            borderColor="rgb(255,255,255,0.16)"
             placeholder="Search"
             value={searchValue}
             fontSize="sm" // Match the font size
@@ -92,7 +93,7 @@ const VariantFilter = ({menuText,eventSchemaId}: {menuText: string; eventSchemaI
         <VStack align="stretch">
           {filteredItems.map((item) => (
               <Box key={item.variantId} p={1} fontSize={"sm"} >
-                <Checkbox isChecked={filters.variantFilters.some(filter => filter.variantId === item.variantId)}
+                <Checkbox borderColor="rgb(255,255,255,0.16)" isChecked={filters.variantFilters.some(filter => filter.variantId === item.variantId)}
                   fontSize="sm" // Ensure this matches the MenuButton font size
                   onChange={() => handleCheckboxChange(item)}>
                   {item.name}
