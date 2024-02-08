@@ -11,8 +11,18 @@ import {
   Colors,
   BarController,
   PieController,
+  ChartData,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
+
+
+type IProps = {
+  data: ChartData<'bar',number[]>;
+  horizontal?: boolean;
+  y_label?: string;
+  y_title?: string;
+  h?: string;
+}
 
 ChartJS.register(
   CategoryScale,
@@ -31,13 +41,7 @@ const AppChartChart = ({
   y_label,
   y_title,
   h,
-}: {
-  data: any;
-  horizontal?: boolean;
-  y_label?: string;
-  y_title?: string;
-  h?: string;
-}) => {
+}: IProps) => {
   return (
     <Container height={h || "90%"} width={"100%"}>
       <Chart

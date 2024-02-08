@@ -1,22 +1,10 @@
 "use client";
-import { Flex, Box, Circle, Icon, Image, Input } from "@chakra-ui/react";
-import { useState } from "react";
+import { Flex, Box, Circle, Icon, Image, Input, Text } from "@chakra-ui/react";
+
 import { AiOutlineClose } from "react-icons/ai";
 
 export default function BrowserMockup({ imageUrl }: { imageUrl: string }) {
-  const [open, setOpen] = useState(true);
 
-  if (!open) {
-    return (
-      <Image
-        src={"/assets/verbiflow-logo.png"}
-        alt="Displayed content"
-        onClick={() => {
-          setOpen(true);
-        }}
-      />
-    );
-  }
   return (
     <Box
       border="1px"
@@ -24,9 +12,19 @@ export default function BrowserMockup({ imageUrl }: { imageUrl: string }) {
       borderRadius="lg"
       overflow="hidden"
       boxShadow="lg"
-      height={"100%"}
+      
       width={"100%"}
     >
+      <Text
+        fontSize="md"
+        fontWeight="semibold"
+        textAlign="center"
+        bg="gray.200"
+        p={1}
+        color={"black"}
+      >
+        Component Preview
+      </Text>
       <Flex
         bg="gray.100"
         p={2}
@@ -56,7 +54,6 @@ export default function BrowserMockup({ imageUrl }: { imageUrl: string }) {
           bg="red.500"
           color="white"
           onClick={() => {
-            setOpen(false);
           }}
         >
           <Icon as={AiOutlineClose} />
@@ -66,7 +63,6 @@ export default function BrowserMockup({ imageUrl }: { imageUrl: string }) {
         src={imageUrl}
         alt="Displayed content"
         width={"100%"}
-        height={"100%"}
       />
     </Box>
   );

@@ -1,100 +1,40 @@
 import AppChartChart from "@/components/charts/AppChartChart";
 import { getApolloClient } from "@/lib/apolloClient";
-import {
-  getUniqueVisitors,
-  getCountryCityStats,
-  getAverageSessions,
-  getUniqueVisitorsByDate,
-} from "@/lib/gqls";
 import { Center, HStack, Text, VStack } from "@chakra-ui/react";
 import AppCard from "@/components/AppCard";
 import AppPieChart from "@/components/charts/AppPieChart";
 import { cookies } from "next/headers";
 import { adjustDateForTimezone } from "@/lib/utils";
+import { useGetUniqueVisitorsChartData } from "@/hooks/visitorsHooks/useGetUniqueVisitorsInterval";
+import { useGetUniqueVisitorCount } from "@/hooks/visitorsHooks/useGetUniqueVisitorsCount";
+import { useGetCountryCityChartData } from "@/hooks/countryHooks/useEventByCountryCityStats";
+import useGetAverageSessionTime from "@/hooks/sessionHooks/useGetAverageSessionTime";
 export default async function Page() {
+
   const nextCookies = cookies();
   const offsetValue = nextCookies.get("timezoneOffset")!.value;
-  const client = getApolloClient();
   const today = adjustDateForTimezone(new Date(), Number(offsetValue));
   let weekAgo = new Date(today);
   let yesterday = new Date(today);
   weekAgo.setDate(yesterday.getDate() - 7);
   yesterday.setDate(yesterday.getDate() - 1);
-  const todayVisitors = (
-    await getUniqueVisitorsByDate({
-      date: today.toLocaleDateString("en-CA"),
-      client,
-      timezoneOffset: offsetValue,
-    })
-  ).getUniqueVisitorCount;
-  const yesterdayVisitors = (
-    await getUniqueVisitorsByDate({
-      date: yesterday.toLocaleDateString("en-CA"),
-      client,
-      timezoneOffset: offsetValue,
-    })
-  ).getUniqueVisitorCount;
-  const { getUniqueVisitorsInterval } = await getUniqueVisitors({
+
+
+  const todayVisitors = await useGetUniqueVisitorCount({ timezoneOffset: offsetValue, date: today.toLocaleDateString("en-CA") });
+  const yesterdayVisitors = await useGetUniqueVisitorCount({ timezoneOffset: offsetValue, date: yesterday.toLocaleDateString("en-CA") });
+
+  //Get UniqueVisitorsChartData
+  const uniqueVisitorsChartData = await useGetUniqueVisitorsChartData({
     startingDate: weekAgo.toLocaleDateString("en-CA"),
     endingDate: today.toLocaleDateString("en-CA"),
-    client,
+    timezoneOffset: offsetValue
+  });
+
+  const countryCityChartData = await useGetCountryCityChartData({
     timezoneOffset: offsetValue,
   });
-  const uniqueVisitorsLabels = getUniqueVisitorsInterval.map(
-    (item) => item.date
-  );
-  const uniqueVisitorsDataPoints = getUniqueVisitorsInterval.map(
-    (item) => item.count
-  );
-  const uniqueVisitorsChartData = {
-    labels: uniqueVisitorsLabels,
-    datasets: [
-      {
-        label: "Unique Visitors",
-        data: uniqueVisitorsDataPoints,
-        backgroundColor: "rgba(107, 70, 193, 0.5)",
-        borderColor: "rgba(107, 70, 193, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
-  const uniqueCountries: Record<string, any> = {};
-  const { getEventByCountryCity } = await getCountryCityStats({
-    client,
-    timezoneOffset: offsetValue,
-  });
-  getEventByCountryCity.forEach((event) => {
-    const key = event.country;
-    if (key === "-") {
-      return;
-    }
-    if (uniqueCountries[key]) {
-      uniqueCountries[key].count += event.count;
-    } else {
-      uniqueCountries[key] = {
-        country: event.country,
-        city: event.city,
-        count: event.count,
-      };
-    }
-  });
-  const sortedData = Object.values(uniqueCountries).sort(
-    (a, b) => b.count - a.count
-  );
-  const locationLabels = sortedData.map((event) => event.country);
-  const locationCounts = sortedData.map((event) => event.count);
-  const countryCityChartData = {
-    labels: locationLabels,
-    datasets: [
-      {
-        label: "Users",
-        data: locationCounts,
-        borderWidth: 1,
-      },
-    ],
-  };
-  const { getAverageSessionTime } = await getAverageSessions({
-    client,
+
+  const getAverageSessionTime = await useGetAverageSessionTime({
     timezoneOffset: offsetValue,
   });
 

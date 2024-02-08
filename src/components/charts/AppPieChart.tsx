@@ -12,10 +12,11 @@ import {
   RadialLinearScale,
   ArcElement,
   BarController,
-  TooltipModel,
-  TooltipItem,
+  ChartData,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
+
+type IProps = { data: ChartData<'pie',number[]> }
 
 ChartJS.register(
   CategoryScale,
@@ -29,7 +30,7 @@ ChartJS.register(
   Tooltip,
   Colors
 );
-const AppPieChart = ({ data }: { data: any }) => {
+const AppPieChart = ({ data }: IProps) => {
   return (
     <Container>
       <Chart
@@ -47,11 +48,15 @@ const AppPieChart = ({ data }: { data: any }) => {
                     0
                   );
                   const percentage = ((item.parsed / sum) * 100).toFixed(2);
+                  
                   return `${item.dataset.label!}: ${
                     item.parsed
                   } (${percentage}%)`;
                 },
               },
+            },
+            legend: {
+              display: false,
             },
           },
         }}
