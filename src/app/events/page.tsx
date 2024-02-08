@@ -5,6 +5,8 @@ import { HStack, Text, VStack } from "@chakra-ui/react";
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { useGetEventSchemasChartData } from "@/hooks/eventHooks/useGetEventSchemas";
+
+
 export default async function Page({
   searchParams,
 }: {

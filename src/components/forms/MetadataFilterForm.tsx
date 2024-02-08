@@ -15,7 +15,7 @@ import { PropertyValue, operatorInternal } from '../filters/context/utils';
 const initialOperatorOptions: operatorInternal[] = ['=', '>', '<', '<=', '>='];
 const initialPropertyOptions = [PropertyValue.VALUE_OF, PropertyValue.LENGTH]
 
-const MetadataFilterForm = ({eventSchemaId}: {eventSchemaId: number}) => {
+const MetadataFilterForm = ({eventSchemaId, onClose}: {eventSchemaId: number;onClose: ()=> void}) => {
   const { eventSchema, loading, error } = useEventSchema(eventSchemaId);
 
   const metadatas = useMemo(() => {
@@ -110,6 +110,7 @@ const MetadataFilterForm = ({eventSchemaId}: {eventSchemaId: number}) => {
           isClosable: true,
         });
       }
+      onClose();
     }
   };
   if(loading){ 

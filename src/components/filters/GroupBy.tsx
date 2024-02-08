@@ -14,7 +14,7 @@ import { GroupByPropertiesInternal } from './context/utils';
 const initialPropertyOptions: GroupByPropertiesInternal[] = [GroupByPropertiesInternal.VALUE_OF, GroupByPropertiesInternal.LENGTH]
 
 
-const GroupBy = ({eventSchemaId}: {eventSchemaId: number}) => {
+const GroupBy = ({eventSchemaId, onClose}: {eventSchemaId: number; onClose: () => void}) => {
   const { eventSchema, loading, error } = useEventSchema(eventSchemaId);
   const [propertyValue, setPropertyValue] = useState<GroupByPropertiesInternal>(GroupByPropertiesInternal.VALUE_OF);
   const [metadataValue, setMetadataValue] = useState('');
@@ -65,8 +65,10 @@ const GroupBy = ({eventSchemaId}: {eventSchemaId: number}) => {
           isClosable: true,
         });
       }
+      
       setPropertyValue(GroupByPropertiesInternal.VALUE_OF); 
       setMetadataValue('');
+      onClose();
     }
   };
   useEffect(() => {

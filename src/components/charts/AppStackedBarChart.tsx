@@ -6,6 +6,7 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
+  BarController,
   Tooltip,
   Title,
   Legend,
@@ -18,6 +19,7 @@ import { EventCount } from "@/lib/gqls";
 ChartJS.register(
   CategoryScale,
   LinearScale,
+  BarController,
   BarElement,
   Tooltip,
   Title,
@@ -44,7 +46,7 @@ const AppStackedBarChart = () => {
     filters?.groupBy.forEach(filter => {
       updatedMap.set(filter.metadataId, `${filter.propertyValue} ${filter.metadataName}`);
     });
-
+    
     // Update the state with the new Map to ensure React detects the change and re-renders
     setMetadataIdToName(updatedMap);
 
@@ -56,12 +58,15 @@ const AppStackedBarChart = () => {
 
   // Helper function to generate random colors
   const getRandomColor = () => {
-    let letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
+    // Generate a random hue from 0 to 360
+    const hue = Math.floor(Math.random() * 360);
+    // Set saturation and lightness to fixed values
+    // You can adjust these if you want different tones of colors
+    const saturation = 100; // 100% for the most vivid colors
+    const lightness = 50; // 50% for balanced lightness
+  
+    // Return the HSL color string
+    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   };
 
   // Processing the provided data to fit Chart.js structure

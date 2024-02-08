@@ -19,7 +19,6 @@ export default function Navbar() {
         style={{ marginBottom: "16px" }}
       />
 
-      <Link href="/" passHref>
         <Button
           justifyContent={"space-between"}
           width={160}
@@ -32,10 +31,13 @@ export default function Navbar() {
             isActive("/") ? { bg: "btn.grad_hover" } : { color: "gray.300" }
           }
           leftIcon={<Icon as={MdDashboard} boxSize={8} />}
+          onClick={() => {
+            document.location.href = '/';
+          }}
+        
         >
           Home
         </Button>
-      </Link>
       <Link href="/events" passHref>
         <Button
           justifyContent={"space-between"}

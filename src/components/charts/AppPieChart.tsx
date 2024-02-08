@@ -48,11 +48,15 @@ const AppPieChart = ({ data }: IProps) => {
                     0
                   );
                   const percentage = ((item.parsed / sum) * 100).toFixed(2);
+                  
                   return `${item.dataset.label!}: ${
                     item.parsed
                   } (${percentage}%)`;
                 },
               },
+            },
+            legend: {
+              display: false,
             },
           },
         }}

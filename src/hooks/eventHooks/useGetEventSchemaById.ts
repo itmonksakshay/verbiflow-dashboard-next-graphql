@@ -22,7 +22,7 @@ query GetEventSchemaCountById($eventSchemaId: Int!) {
 }
 `);
 
-const useGetEventSchemaCountById = async ({ timezoneOffset, cached, id }: IProps) => {
+const getEventSchemaCountById = async ({ timezoneOffset, cached, id }: IProps) => {
 
     const { data: { getEventCount } } = await typescriptApolloClient.query({
         query: GetEventSchemaCountById,
@@ -39,8 +39,8 @@ const useGetEventSchemaCountById = async ({ timezoneOffset, cached, id }: IProps
     return getEventCount;
 };
 
-const useGetEventSchemaCountByIdChartData = async ({ timezoneOffset, cached, id,days=0 }: IProps) => {
-    const eventCount = await useGetEventSchemaCountById({ timezoneOffset, cached, id });
+const getEventSchemaCountByIdChartData = async ({ timezoneOffset, cached, id,days=0 }: IProps) => {
+    const eventCount = await getEventSchemaCountById({ timezoneOffset, cached, id });
     const today = adjustDateForTimezone(new Date(), Number(timezoneOffset));
     const datesForLastDays: string[] = [];
     for (let i = days - 1; i >= 0; i--) {
@@ -90,4 +90,4 @@ const useGetEventSchemaCountByIdChartData = async ({ timezoneOffset, cached, id,
 
 }
 
-export { useGetEventSchemaCountById,useGetEventSchemaCountByIdChartData }
+export { getEventSchemaCountById,getEventSchemaCountByIdChartData }

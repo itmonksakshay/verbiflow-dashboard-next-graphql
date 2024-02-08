@@ -25,6 +25,7 @@ export type metadataFilterInternal = {
   propertyValue: PropertyValue
 }
 
+
 export type variantFilterInternal = { 
   variantName: string; 
   variantId: number;

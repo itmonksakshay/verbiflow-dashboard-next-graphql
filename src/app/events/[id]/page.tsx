@@ -20,8 +20,6 @@ import {
 } from "@chakra-ui/react";
 import { cookies } from "next/headers";
 import dynamic from 'next/dynamic';
-import { useGetEventSchemaCountByIdChartData } from "@/hooks/eventHooks/useGetEventSchemaById";
-import AppStackedBarChart from "@/components/charts/AppStackedBarChart";
 
 const FilterTagComponent = dynamic(() => import("@/components/FilterTagComponent"), { ssr: false });
 
@@ -39,7 +37,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   return (
     <VStack w={"100%"} h={"100%"} overflow={"auto"}>
-      <Text fontWeight={900} fontSize={20} py={"min(1.5vh,37.5px)"}>
+      <Text fontWeight={900} fontSize={20} marginTop={"10px"} >
           {getEventSchema.eventName}
       </Text>
        {/* Align FilterTagComponent to the left */}
@@ -58,7 +56,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             justifyContent={"space-around"}
             px={8}
           >
-            <Box height={"400px"} width={"600px"} id="filterBarChart">
+            <Box height={"600px"} width={"60%"} id="filterBarChart">
             </Box>
             <VStack gap={3} h={'full'} justifyContent={"center"} alignItems={"center"}>
               <Box width={"390px"} height={"100%"} maxHeight={"400px"}>

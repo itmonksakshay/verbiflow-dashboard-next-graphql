@@ -289,13 +289,15 @@ export type EventCount = {
   index: number;
 }
 
+
 export const getEventByFilter = async ({
   eventSchemaId,
   metadataFilter,
   client,
   groupByFilter,
   variantFilter,
-  timezoneOffset
+  timezoneOffset,
+  timestampFilter
 }: {
   client: ApolloClient<NormalizedCacheObject>;
   eventSchemaId: number;
@@ -303,6 +305,7 @@ export const getEventByFilter = async ({
   groupByFilter: MetadataSchemaGroupBy[];
   variantFilter: number[];
   timezoneOffset: string;
+  timestampFilter: timestamp
 }): Promise<{ getEventDataByFilter: EventCount[] }> => {
 
 
@@ -311,6 +314,7 @@ export const getEventByFilter = async ({
     $metadataFilter: [metadataFilter!]!
     $groupByMetadataSchemaIds: [MetadataSchemaGroupBy!]
     $variantFilter: [Int!]
+    $timestamp: timestampFilter
   ) {
     getEventDataByFilter(
       filter: { 
@@ -318,6 +322,7 @@ export const getEventByFilter = async ({
         metadataFilter: $metadataFilter
         groupByMetadataSchemaIds: $groupByMetadataSchemaIds 
         variantFilter: $variantFilter
+        timestamp: $timestamp
       }
     ) {
       date
@@ -341,6 +346,7 @@ export const getEventByFilter = async ({
       metadataFilter: metadataFilter,
       variantFilter: variantFilter,
       groupByMetadataSchemaIds: groupByFilter,
+      timestamp: timestampFilter
     },
     fetchPolicy: "network-only",
     context: {

@@ -1,8 +1,7 @@
 import { typescriptApolloClient } from "@/lib/apolloClient";
 import { gql } from '@/gql/gql';
-import { useGetEventSchemaCountById, useGetEventSchemaCountByIdChartData } from "./useGetEventSchemaById";
-import { adjustDateForTimezone } from "@/lib/utils";
-import { ChartDataset } from "chart.js";
+import { getEventSchemaCountByIdChartData } from "./useGetEventSchemaById";
+
 
 type IProps = {
     searchValue?: string;
@@ -38,7 +37,7 @@ export const useGetEventSchemasChartData = async ({ timezoneOffset, searchValue 
     const eventSchemaData = await useGetEventSchemas({ timezoneOffset, cached: !!searchValue });
 
     let schemas = await Promise.all(eventSchemaData.map(async (item) => {
-        return await useGetEventSchemaCountByIdChartData({ timezoneOffset, cached: !!searchValue, id: item.eventSchemaId,days:3 }).then((count) => ({
+        return await getEventSchemaCountByIdChartData({ timezoneOffset, cached: !!searchValue, id: item.eventSchemaId,days:3 }).then((count) => ({
             id: item.eventSchemaId,
             name: item.eventName,
             count: count,
